@@ -69,10 +69,15 @@ const sections=['overview','appearance','rating','behavior','data','migration','
       const m=document.getElementById('settingsModal'),panel=m.querySelector(`[data-settings-panel="${name}"]`);
       const active=[...m.querySelectorAll('[data-settings-panel]')].filter(x=>!x.hidden);
       const nav=m.querySelector('.settings-nav'),r=nav.getBoundingClientRect();
+      const main=m.querySelector('.settings-main'),content=main.getBoundingClientRect();
       const errors=[];
       if(active.length!==1||active[0]!==panel)errors.push('tab switching leaves multiple panels visible');
       if(nav.scrollWidth>nav.clientWidth+3)errors.push('settings nav clipped horizontally');
-      if(r.width<200&&innerWidth>=761)errors.push('desktop nav is too narrow');
+      if(innerWidth>=761){
+       if(r.width<200)errors.push('desktop nav is too narrow ('+Math.round(r.width)+'px)');
+       if(r.right>content.left+2)errors.push('settings navigation overlaps main content');
+       if(content.width<400)errors.push('settings content is too narrow ('+Math.round(content.width)+'px)');
+      }
       if(m.scrollWidth>m.clientWidth+5)errors.push('settings modal overflows horizontally');
       if(name==='data'){
        const buttons=['exportBtn','importBtn'].map(id=>m.querySelector('#'+id));
@@ -110,8 +115,14 @@ const sections=['overview','appearance','rating','behavior','data','migration','
    checks++;
    await context.close();activePage=null;
   }
-  console.log('SETTINGS_LIVE_AUDIT',JSON.stringify({version:(source.match(/const APP_UI_VERSION = "([0-9.]+)"/)||[])[1],checks,failures:failures.slice(0,20)}));
-  if(failures.length)process.exitCode=1;
+  const audit={version:(source.match(/const APP_UI_VERSION = "([0-9.]+)"/)||[])[1],checks,failures};
+  console.log('SETTINGS_LIVE_AUDIT',JSON.stringify(audit));
+  if(failures.length){
+   const target=path.join(process.env.RUNNER_TEMP||os.tmpdir(),'pl-synthetic-report');
+   fs.mkdirSync(target,{recursive:true});
+   fs.writeFileSync(path.join(target,'settings-layout-audit.json'),JSON.stringify(audit,null,2));
+   process.exitCode=1;
+  }
  }catch(e){
    console.error('SETTINGS_LIVE_FAIL',String(e.stack||e),'stage='+stage,'width='+activeWidth);
    // Diagnostics are strictly limited to the synthetic 127.0.0.1 origin;
