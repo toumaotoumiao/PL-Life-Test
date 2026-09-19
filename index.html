@@ -9,7 +9,7 @@
 <meta content="telephone=no,email=no,address=no" name="format-detection"/>
 <script>(function(){var u=String(navigator.userAgent||"");var r=document.documentElement;if(/baidubrowser|baiduboxapp|\bbdapp\b/i.test(u))r.classList.add("compat-baidu-mobile");if(/HUAWEI|HarmonyOS|OpenHarmony|ArkWeb/i.test(u))r.classList.add("compat-huawei-device");try{if(!(window.CSS&&CSS.supports&&CSS.supports("color","oklch(50% 0.1 120)"))||!CSS.supports("color","color-mix(in srgb, #000 50%, #fff)"))r.classList.add("compat-legacy-color")}catch(e){r.classList.add("compat-legacy-color")}})();</script>
 <meta content="#f5f7f5" id="themeColorMeta" name="theme-color"/>
-<meta content="default-src 'self' data: blob:; connect-src 'none'; img-src 'self' data: blob:; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'self' data: blob:; worker-src 'self'; manifest-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';" http-equiv="Content-Security-Policy"/>
+<meta content="default-src 'self' data: blob:; connect-src 'self'; img-src 'self' data: blob:; media-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'self' data: blob:; worker-src 'self'; manifest-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';" http-equiv="Content-Security-Policy"/>
 <meta content="no-referrer" name="referrer"/>
 <meta content="noindex,nofollow,noarchive" name="robots"/>
 <meta content="light dark" name="color-scheme"/>
@@ -7228,6 +7228,155 @@ html.compat-legacy-color[data-theme]{--t-muted-2:var(--text-faint);--t-warning-l
 @media(max-width:900px){#statsView>.stats-toolbar{grid-template-columns:1fr!important}#statsView .stats-toolbar-actions.stats-range-workbench{justify-content:flex-start!important;max-width:100%!important}}
 @media(max-width:760px){#profilesView>.filter-workbench,#pcsView>.filter-workbench,#recordsView .records-filter-workbench{padding:6px!important;margin-bottom:8px!important}#statsView .stats-toolbar-actions.stats-range-workbench{width:100%!important}#recordsView .table-record-head-actions{max-width:100%!important}#plansView .plan-state-pair{justify-content:flex-start!important}.table-status-field select{min-height:44px!important;font-size:16px!important}}
 </style>
+
+<style id="round78-interface-reachability">
+/* One accessibility contract shared by the seven primary views. Existing control IDs and
+   callbacks are reused; no data, database or record semantics are changed. */
+@media (min-width:761px) {
+  #profilesView>.filter-workbench,#pcsView>.filter-workbench,
+  #recordsView .records-filter-workbench,#modulesView .module-native-controls {
+    min-height:0!important;height:auto!important;grid-auto-rows:min-content!important;
+    align-content:start!important;row-gap:6px!important;
+  }
+  #statsView>.stats-toolbar {min-height:0!important;height:auto!important;align-items:center!important;}
+  #statsView .stats-toolbar-actions.stats-range-workbench {min-height:0!important;height:auto!important;align-self:center!important;}
+}
+@media (max-width:760px) {
+  /* Fixed shortcut rail must have its own content gutter, across ALL seven pages.
+     Prior :root reset to 0 meant it covered preference text and card actions. */
+  :root {--mobile-rail-safe:54px!important;}
+  #profilesView,#pcsView,#modulesView,#plansView,#recordsView,#selfIntroView,#statsView {
+    box-sizing:border-box!important;min-width:0!important;width:100%!important;
+    padding-right:var(--mobile-rail-safe)!important;
+  }
+  .shell {box-sizing:border-box!important;padding-bottom:calc(108px + env(safe-area-inset-bottom))!important;}
+  #mobileSideRail.mobile-side-rail {
+    box-sizing:border-box!important;width:48px!important;padding:2px!important;
+    right:max(4px,env(safe-area-inset-right))!important;
+    bottom:calc(80px + env(safe-area-inset-bottom))!important;
+    opacity:.82!important;overflow:visible!important;
+  }
+  #mobileSideRail.mobile-side-rail button {
+    box-sizing:border-box!important;width:44px!important;min-width:44px!important;max-width:44px!important;
+    height:44px!important;min-height:44px!important;max-height:44px!important;
+  }
+  #mobileSideRail.mobile-side-rail button:focus-visible {outline:2px solid var(--t-accent)!important;outline-offset:1px!important;}
+  /* Controls hidden in earlier mobile compact rules had no export proxy in the sheet.
+     Keep the original, wired buttons visible alongside their associated page actions. */
+  #selfIntroView .self-intro-toolbar>.view-toolbar-actions {
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-items:center!important;justify-content:stretch!important;
+    width:100%!important;max-width:none!important;gap:8px!important;
+  }
+  /* The inherited compact filter rule hid the only 'More' controls for module
+     import/export and record management. Provide an explicit, labelled second row. */
+  /* Module workbench formerly kept its status row in a second outer grid column;
+     the search and More controls got squeezed into half of a phone screen. */
+  #modulesView .module-native-controls {
+    display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    grid-template-areas:none!important;gap:6px!important;min-width:0!important;
+  }
+  #modulesView .module-native-controls>.filter-primary-row,
+  #modulesView .module-native-controls>.filter-status-row {
+    grid-column:1/-1!important;grid-row:auto!important;width:100%!important;
+    min-width:0!important;max-width:100%!important;
+  }
+  #modulesView .module-native-controls .filter-primary-row>#moduleNativeSort,
+  #modulesView .module-native-controls .filter-primary-row>.module-layout-switch {
+    display:none!important;
+  }
+  #modulesView .module-native-controls .filter-primary-row,
+  #recordsView .records-filter-workbench .filter-primary-row {
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    grid-template-areas:"query query" "filter tools"!important;
+    align-items:center!important;gap:6px!important;
+  }
+  #modulesView .module-native-controls .filter-primary-row>.filter-search,
+  #recordsView .records-filter-workbench .filter-primary-row>.filter-search {
+    grid-area:query!important;min-width:0!important;width:100%!important;
+  }
+  #modulesView .module-native-controls .filter-primary-row>[data-filter-toggle="modules"],
+  #recordsView .records-filter-workbench .filter-primary-row>[data-filter-toggle="records"] {
+    grid-area:filter!important;width:100%!important;min-width:0!important;
+  }
+  #modulesView .module-native-controls .filter-primary-row>[data-mobile-page-sheet="moduleTools"],
+  #recordsView .records-filter-workbench .filter-primary-row>[data-mobile-page-sheet="records"] {
+    display:inline-flex!important;grid-area:tools!important;align-items:center!important;
+    justify-content:center!important;width:100%!important;min-width:0!important;
+    min-height:44px!important;padding:8px!important;
+  }
+  #selfIntroView .self-intro-toolbar .self-intro-mode-btn,
+  #selfIntroView .self-intro-toolbar .self-intro-export-center {
+    display:flex!important;grid-column:auto!important;min-width:0!important;width:100%!important;
+    align-items:center!important;justify-content:center!important;
+  }
+  #selfIntroView .self-intro-toolbar .self-intro-mode-btn {min-height:44px!important;}
+  #selfIntroView .self-intro-toolbar #selfIntroExportBtn {
+    display:inline-flex!important;min-width:0!important;width:100%!important;
+    min-height:44px!important;align-items:center!important;justify-content:center!important;
+    white-space:normal!important;line-height:1.25!important;
+  }
+  #selfIntroView .self-intro-toolbar .mobile-page-tools-btn {
+    grid-column:1/-1!important;width:100%!important;min-height:44px!important;
+  }
+  /* Existing browse mode intentionally hides the jump button; retain that rule.
+     The export action remains accessible in BOTH browse and edit mode. */
+  #selfIntroView .self-intro-toolbar .self-intro-save-state:not(.saved) {grid-column:1/-1!important;min-width:0!important;}
+  #selfIntroView #selfIntroExportPanel:not([hidden]) {
+    position:fixed!important;z-index:var(--z-submodal,720)!important;
+    top:calc(8px + env(safe-area-inset-top))!important;
+    bottom:calc(8px + env(safe-area-inset-bottom))!important;
+    left:8px!important;right:8px!important;width:auto!important;max-width:none!important;
+    max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom))!important;
+    overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain!important;
+  }
+  #selfIntroExportPanel .export-composer-grid {grid-template-columns:minmax(0,1fr)!important;gap:10px!important;}
+  #selfIntroExportPanel .export-composer-controls,#selfIntroExportPanel .export-preview-pane {min-width:0!important;}
+  #selfIntroExportPanel .export-center-close {width:44px!important;height:44px!important;flex:0 0 44px!important;}
+  #selfIntroExportPanel .export-center-foot {padding-bottom:calc(10px + env(safe-area-inset-bottom))!important;}
+  #selfIntroExportPanel .export-center-foot .btn {min-height:44px!important;}
+  #statsView .stats-toolbar-actions.stats-range-workbench {
+    display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-items:stretch!important;justify-content:stretch!important;
+    gap:8px!important;width:100%!important;max-width:none!important;
+    min-height:0!important;height:auto!important;padding:4px 0!important;
+  }
+  #statsView .stats-toolbar-actions>.mobile-page-tools-btn,
+  #statsView .stats-toolbar-actions>#statsExportBtn {
+    display:inline-flex!important;min-width:0!important;width:100%!important;
+    min-height:44px!important;align-items:center!important;justify-content:center!important;
+    padding:8px!important;white-space:normal!important;
+  }
+  /* Stable mobile search/header rhythm, including long localized labels. */
+  #profilesView>.filter-workbench,#pcsView>.filter-workbench,
+  #recordsView .records-filter-workbench,#modulesView .module-native-controls {
+    height:auto!important;min-height:0!important;grid-auto-rows:min-content!important;
+    align-content:start!important;margin-bottom:10px!important;
+  }
+  #profilesView .filter-primary-row,#pcsView .filter-primary-row,#recordsView .filter-primary-row,
+  #modulesView .module-native-controls {min-width:0!important;}
+  #profilesView .filter-primary-row .filter-search,#pcsView .filter-primary-row .filter-search,
+  #recordsView .filter-primary-row .filter-search {min-width:0!important;width:100%!important;}
+  #profilesView .filter-primary-row .filter-search input,#pcsView .filter-primary-row .filter-search input,
+  #recordsView .filter-primary-row .filter-search input {min-width:0!important;width:100%!important;}
+  #statsView>.stats-toolbar {min-height:0!important;height:auto!important;grid-template-columns:minmax(0,1fr)!important;align-items:start!important;}
+  #statsView>.stats-scope-summary {margin:0 0 8px!important;min-height:0!important;}
+  #selfIntroView .self-intro-summary-hero strong,#selfIntroView .self-intro-summary-common p,
+  #recordsView .record-title-name,#plansView .plan-row-title,
+  #modulesView .native-module-card strong,#pcsView .pc-card strong {
+    overflow-wrap:anywhere!important;word-break:normal!important;white-space:normal!important;
+  }
+  /* Never let fixed global shortcuts cover an open mobile export/modal. */
+  body.self-intro-export-open #mobileSideRail,body.self-intro-export-open #mobileBottomNav,
+  body.mobile-page-sheet-open #mobileSideRail {pointer-events:none!important;opacity:0!important;}
+}
+@media(max-width:390px) {
+  :root {--mobile-rail-safe:52px!important;}
+  #mobileSideRail.mobile-side-rail {right:max(2px,env(safe-area-inset-right))!important;}
+  #selfIntroExportPanel .export-center-head {padding:9px!important;}
+  #selfIntroExportPanel .export-center-body {padding-inline:8px!important;}
+}
+</style>
 </head>
 <body>
 <div class="app" id="appRoot">
@@ -8369,7 +8518,7 @@ const DEFAULT_RECOVERY_MAX_SNAPSHOTS = 12, DEFAULT_RECOVERY_AUTO_HOURS = 12, DEF
 const EXTERNAL_BACKUP_ENABLED_KEY = "tomato_pl_external_backup_enabled_v1", EXTERNAL_BACKUP_TIME_KEY = "tomato_pl_external_backup_time_v1", EXTERNAL_BACKUP_INTERVAL_KEY = "tomato_pl_external_backup_interval_v1", EXTERNAL_BACKUP_LAST_KEY = "tomato_pl_external_backup_last_v1", EXTERNAL_BACKUP_META_KEY = "tomato_pl_external_backup_meta_v1", EXTERNAL_BACKUP_LOCK_KEY = "tomato_pl_external_backup_lock_v1", EXTERNAL_BACKUP_FALLBACK_KEY = "tomato_pl_external_backup_fallback_v1", EXTERNAL_BACKUP_PENDING_KEY = "tomato_pl_external_backup_pending_v1", EXTERNAL_BACKUP_MOBILE_DELIVERY_KEY = "tomato_pl_external_backup_mobile_delivery_v1";
 const EXTERNAL_BACKUP_DB_NAME = "tomato_pl_external_backup_v1", EXTERNAL_BACKUP_DB_VERSION = 1, EXTERNAL_BACKUP_STORE_NAME = "handles";
 const APP_NAME = "PL收集梦想生活";
-const APP_UI_VERSION = "8.1.12.70";
+const APP_UI_VERSION = "8.1.12.72";
 const I18N_DEFAULT_LOCALE = "zh-CN";
 const I18N_LOCALE_META = {
     "zh-CN": { label: "简体中文", htmlLang: "zh-CN", ready: true },
