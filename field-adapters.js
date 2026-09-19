@@ -14,9 +14,16 @@
  const number=v=>has(v)&&Number.isFinite(Number(v))?Number(v):null;
  function scorePresent(scores){return Object.values(object(scores)).some(v=>number(v)!==null)}
  function validLogs(r){
-  const urls=new Set(),source=arr(r.logEntries).length?arr(r.logEntries):arr(r.logUrls);
-  for(const item of source){const url=t(item&&typeof item==='object'?item.url:item);if(url)urls.add(url)}
-  if(t(r.logUrl))urls.add(t(r.logUrl));return urls.size;
+  // Unlinked notes are legitimate saved Log entries, even before a URL is added.
+  const urls=new Set(),entries=arr(r.logEntries),source=entries.length?entries:arr(r.logUrls);
+  let noteOnly=0;
+  source.forEach((item,i)=>{
+   const url=t(item&&typeof item==='object'?item.url:item);
+   const label=t(item&&typeof item==='object'?(item.label||item.note):arr(r.logLabels)[i]);
+   if(url)urls.add(url);else if(label)noteOnly++;
+  });
+  if(t(r.logUrl))urls.add(t(r.logUrl));
+  return urls.size+noteOnly;
  }
  function moduleScore(m,settings){
   const rating=object(m.rating),manual=number(rating.manualScore);if(manual!==null)return manual;
