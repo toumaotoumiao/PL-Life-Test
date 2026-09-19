@@ -28,6 +28,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Check table lifecycle and Log note compatibility
+        run: node --test .github/pl-ci/round71-lifecycle-log-ux.test.cjs
+      - name: Check Log-only notes, record filtering and failed-save UI recovery
+        run: node --test .github/pl-ci/round72-log-status-regression.test.cjs
+      - name: Check CoC7 blank editions, ambiguity handling and partial export
+        run: node --test .github/pl-ci/round73-coc7-variant-fidelity.test.cjs
+      - name: Check filled-card family layout, purposeful extraction and original-workbook export
+        run: node --test .github/pl-ci/round74-filled-card-family-regression.test.cjs
       - name: Install pinned test-only browser runner
         run: npm install --no-save --no-audit --no-fund --prefix .github/pl-ci playwright@1.55.0
       - name: Install Chromium and OS dependencies
