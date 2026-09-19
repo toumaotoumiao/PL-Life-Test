@@ -50,6 +50,8 @@ jobs:
         run: node --test .github/pl-ci/round82-log-save-root-cause.test.cjs
       - name: Audit whole-site verified-save boundaries and legacy Log integrity
         run: node --test .github/pl-ci/round83-save-path-audit.test.cjs
+      - name: Verify settings navigation, unified import and preserved backup controls
+        run: node --test .github/pl-ci/round88-settings-information-architecture.test.cjs
       - name: Install pinned test-only browser runner
         run: npm install --no-save --no-audit --no-fund --prefix .github/pl-ci playwright@1.55.0
       - name: Install Chromium and OS dependencies
@@ -64,6 +66,8 @@ jobs:
         run: node --test .github/pl-ci/round85-modal-visibility.test.cjs
       - name: Guard all seven page structures and populated record width in Chromium
         run: node .github/pl-ci/round87-view-flow-browser-audit.cjs
+      - name: Open settings, switch all sections and reach the unified import in Chromium
+        run: node .github/pl-ci/round88-settings-live-browser.cjs
       - name: Type Log notes on both pages, save and reload in Chromium
         run: node .github/pl-ci/round82-log-live-browser.cjs
       - name: Audit mobile and desktop action visibility in Chromium
