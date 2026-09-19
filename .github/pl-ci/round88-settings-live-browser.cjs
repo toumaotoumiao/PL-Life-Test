@@ -29,10 +29,19 @@ const sections=['overview','appearance','rating','behavior','data','migration','
    page.on('pageerror',e=>errors.push(String(e.message||e)));
    await page.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'load',timeout:60000});
    await page.waitForFunction(()=>typeof openSettings==='function'&&typeof activateSettingsPanel==='function',null,{timeout:60000});
+   // On a fresh origin the first-run dialog appears asynchronously (450 ms
+   // after startup). Check it after the delay, then dismiss through its real
+   // UI. Otherwise the guide can intercept clicks on Settings tabs.
+   await page.waitForTimeout(850);
    if(await page.locator('#onboardingBackdrop').isVisible())await page.locator('#onboardingLaterBtn').click();
    await page.evaluate(()=>openSettings());
+   await page.waitForFunction(()=>document.getElementById('settingsModal')?.hidden===false && document.getElementById('onboardingBackdrop')?.hidden===true);
    for(const name of sections){
-    await page.locator(`#settingsModal .settings-nav [data-settings-target="${name}"]`).click();
+    const sectionButton=page.locator(`#settingsModal .settings-nav [data-settings-target="${name}"]`);
+    // Every button must be really actionable. Do not force clicks or suppress
+    // a blocking overlay: such a regression should fail with a diagnosis.
+    if(await page.locator('#onboardingBackdrop').isVisible())throw Error('onboarding unexpectedly covers Settings section '+name);
+    await sectionButton.click();
     const result=await page.evaluate(name=>{
       const m=document.getElementById('settingsModal'),panel=m.querySelector(`[data-settings-panel="${name}"]`);
       const active=[...m.querySelectorAll('[data-settings-panel]')].filter(x=>!x.hidden);
@@ -58,6 +67,24 @@ const sections=['overview','appearance','rating','behavior','data','migration','
    if(!native||!native.element)failures.push({width,name:'data',error:'native import file chooser missing'});
    checks++;
    if(errors.length)failures.push({width,name:'runtime',error:errors.slice(0,3).join(' | ')});
+   await context.close();
+  }
+  // Also exercise the genuine first-visit race: open Settings while the
+  // onboarding timer may still be pending. The delayed guide must not steal
+  // focus from a user-initiated modal or intercept any settings controls.
+  {
+   const context=await browser.newContext({viewport:{width:375,height:900},serviceWorkers:'block'});
+   const page=await context.newPage();
+   await page.goto('http://127.0.0.1:'+server.address().port+'/index.html',{waitUntil:'load',timeout:60000});
+   await page.waitForFunction(()=>typeof openSettings==='function'&&typeof maybeShowOnboarding==='function',null,{timeout:60000});
+   await page.evaluate(()=>openSettings());
+   await page.waitForTimeout(900);
+   if(await page.locator('#onboardingBackdrop').isVisible())
+    failures.push({width:375,name:'first-run',error:'delayed onboarding covered the user-opened Settings'});
+   await page.locator('#settingsModal .settings-nav [data-settings-target="data"]').click();
+   if(!await page.locator('#settingsModal [data-settings-panel="data"]').isVisible())
+    failures.push({width:375,name:'first-run',error:'Settings became unreachable during onboarding race'});
+   checks++;
    await context.close();
   }
   console.log('SETTINGS_LIVE_AUDIT',JSON.stringify({version:(source.match(/const APP_UI_VERSION = "([0-9.]+)"/)||[])[1],checks,failures:failures.slice(0,20)}));

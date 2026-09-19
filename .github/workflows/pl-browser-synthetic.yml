@@ -52,6 +52,8 @@ jobs:
         run: node --test .github/pl-ci/round83-save-path-audit.test.cjs
       - name: Verify settings navigation, unified import and preserved backup controls
         run: node --test .github/pl-ci/round88-settings-information-architecture.test.cjs
+      - name: Guard delayed first-run onboarding against open editors and Settings
+        run: node --test .github/pl-ci/round89-onboarding-focus.test.cjs
       - name: Install pinned test-only browser runner
         run: npm install --no-save --no-audit --no-fund --prefix .github/pl-ci playwright@1.55.0
       - name: Install Chromium and OS dependencies

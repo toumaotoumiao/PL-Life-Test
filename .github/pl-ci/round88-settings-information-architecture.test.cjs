@@ -51,11 +51,18 @@ test('backup primary has 2 visible actions, secondary tools tucked away',()=>{
 });
 test('version and cache are synchronized, data schema is not rewritten',()=>{
  const version=html.match(/const APP_UI_VERSION = "([0-9.]+)"/)?.[1];
- assert.equal(version,'8.1.12.81');assert(sw.includes('v'+version));
+ assert.equal(version,'8.1.12.82');assert(sw.includes('v'+version));
  assert(!/data-settings-panel="version"[^>]*>[\s\S]*?id="importBtn"/.test(html.slice(html.indexOf('data-settings-panel="version"'),html.indexOf('data-settings-panel="advanced"'))));
 });
 
 test('settings search expands newly categorized collapsed tools before scrolling',()=>{
  assert.match(html,/let group = target\.closest\("details"\); while \(group && panel\.contains\(group\)\)/);
  for(const label of ['导入与迁移','版本与更新','高级工具'])assert(html.includes(label));
+});
+
+test('onboarding scheduled after startup cannot cover Settings or any open editor',()=>{
+ assert.match(html,/function maybeShowOnboarding\(\)[\s\S]*?setTimeout\(\(\) => \{[\s\S]*?if \(anyModalSurfaceOpen\(\)/);
+ const settings=html.slice(html.indexOf('function openSettings()'),html.indexOf('function activateSettingsPanel(key)'));
+ assert.match(settings,/closeOnboardingTemporarily\(\)/);
+ assert(settings.indexOf('closeOnboardingTemporarily()')<settings.indexOf('showOverlay("settings")'));
 });
