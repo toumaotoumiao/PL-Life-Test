@@ -8518,7 +8518,7 @@ const DEFAULT_RECOVERY_MAX_SNAPSHOTS = 12, DEFAULT_RECOVERY_AUTO_HOURS = 12, DEF
 const EXTERNAL_BACKUP_ENABLED_KEY = "tomato_pl_external_backup_enabled_v1", EXTERNAL_BACKUP_TIME_KEY = "tomato_pl_external_backup_time_v1", EXTERNAL_BACKUP_INTERVAL_KEY = "tomato_pl_external_backup_interval_v1", EXTERNAL_BACKUP_LAST_KEY = "tomato_pl_external_backup_last_v1", EXTERNAL_BACKUP_META_KEY = "tomato_pl_external_backup_meta_v1", EXTERNAL_BACKUP_LOCK_KEY = "tomato_pl_external_backup_lock_v1", EXTERNAL_BACKUP_FALLBACK_KEY = "tomato_pl_external_backup_fallback_v1", EXTERNAL_BACKUP_PENDING_KEY = "tomato_pl_external_backup_pending_v1", EXTERNAL_BACKUP_MOBILE_DELIVERY_KEY = "tomato_pl_external_backup_mobile_delivery_v1";
 const EXTERNAL_BACKUP_DB_NAME = "tomato_pl_external_backup_v1", EXTERNAL_BACKUP_DB_VERSION = 1, EXTERNAL_BACKUP_STORE_NAME = "handles";
 const APP_NAME = "PL收集梦想生活";
-const APP_UI_VERSION = "8.1.12.72";
+const APP_UI_VERSION = "8.1.12.73";
 const I18N_DEFAULT_LOCALE = "zh-CN";
 const I18N_LOCALE_META = {
     "zh-CN": { label: "简体中文", htmlLang: "zh-CN", ready: true },
@@ -35486,7 +35486,7 @@ initV806SearchUX();
     const rel=document.getElementById('pcRelationFilter');rel?.insertAdjacentElement('afterend',tagSel);rel?.insertAdjacentElement('afterend',moduleSel);
   }
   const pcToolbarMain=document.querySelector('#pcsView .pc-toolbar-main');
-  if(pcToolbarMain&&!document.getElementById('pcBatchToggleBtn')){const b=document.createElement('button');b.type='button';b.className='btn';b.id='pcBatchToggleBtn';b.textContent='批量管理';const mobileBtn=pcToolbarMain.querySelector('[data-mobile-page-sheet="pcs"]');if(mobileBtn)mobileBtn.insertAdjacentElement('afterend',b);else pcToolbarMain.appendChild(b);}
+  if(pcToolbarMain&&!document.getElementById('pcBatchToggleBtn')){const b=document.createElement('button');b.type='button';b.className='btn';b.id='pcBatchToggleBtn';b.textContent='批量管理';const mobileBtn=pcToolbarMain.querySelector('.mobile-page-tools-btn[data-mobile-page-sheet="pcs"]');if(mobileBtn)mobileBtn.insertAdjacentElement('afterend',b);else pcToolbarMain.appendChild(b);}
   let pcBatchBar=document.getElementById('pcBatchBar');
   if(!pcBatchBar&&pcGrid){pcBatchBar=document.createElement('div');pcBatchBar.id='pcBatchBar';pcBatchBar.className='pc-batch-bar';pcBatchBar.hidden=true;pcBatchBar.innerHTML=`<div class="pc-batch-summary"><strong id="pcBatchSelectedText">已选 0 个 PC</strong><span id="pcBatchScopeText">当前筛选 0 个</span></div><button class="btn small" type="button" data-pc-batch-select-visible>选择当前结果</button><button class="btn small" type="button" data-pc-batch-clear>清空选择</button><button class="btn small" type="button" data-pc-batch-tags>追加标签</button><select aria-label="批量设置角色状态" data-pc-batch-status><option value="">批量状态…</option><option value="active">使用中</option><option value="dead">死亡</option><option value="archived">封存</option></select><button class="btn small" type="button" data-pc-batch-status-apply>应用状态</button><button class="btn small" type="button" data-pc-batch-export>导出所选</button><button class="btn small primary" type="button" data-pc-batch-done>完成</button>`;pcGrid.parentElement.insertBefore(pcBatchBar,pcGrid);}
   const pcModuleFilter=document.getElementById('pcModuleFilter'),pcTagFilter=document.getElementById('pcTagFilter');
@@ -35499,7 +35499,7 @@ initV806SearchUX();
     if(els.pcSort)els.pcSort.hidden=pcs.length<2;
     if(pcLayoutSwitch)pcLayoutSwitch.hidden=pcs.length<2;
     const batch=document.getElementById('pcBatchToggleBtn');if(batch)batch.hidden=pcs.length<2&&!pcBatchMode;
-    const mobileTools=document.querySelector('[data-mobile-page-sheet="pcs"]');if(mobileTools)mobileTools.hidden=pcs.length<2&&!hasFilter;
+    const mobileTools=pcToolbarMain?.querySelector('.mobile-page-tools-btn[data-mobile-page-sheet="pcs"]');if(mobileTools)mobileTools.hidden=pcs.length<2&&!hasFilter;
   }
   // 仅用于 PC 详情中的模组链接去重；筛选的 ID 解析已交由 PLRelationIndex。
   function pcModuleKeyForEntity(e){return String(e?.moduleId||'')||`name:${normalizedEntityNameKey(e?.moduleName||'')}`;}

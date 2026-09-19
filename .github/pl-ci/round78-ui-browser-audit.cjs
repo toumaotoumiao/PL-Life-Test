@@ -68,6 +68,17 @@ async function inspect(page,view,width){
         try{await page.waitForFunction(id=>document.getElementById(id)&&!document.getElementById(id).hidden,view+'View',{timeout:6000});}
         catch(e){results.push({width,view,failed:['view-switch-timeout']});continue;}
         const record=await inspect(page,view,width);
+        if(view==='pcs' && record.controls.filter.shown){
+          // Test the actual wired filter action, not merely its geometric presence.
+          await page.evaluate(()=>document.querySelector('#pcsView [data-filter-toggle="pcs"]').click());
+          try{
+            await page.waitForFunction(()=>innerWidth<=760
+              ?document.getElementById('mobilePageSheetBackdrop')?.hidden===false
+              :document.getElementById('pcFilterPanel')?.hidden===false,null,{timeout:4000});
+            if(width<=760) await page.evaluate(()=>document.querySelector('[data-mobile-page-sheet-close]')?.click());
+            else await page.evaluate(()=>document.querySelector('#pcsView [data-filter-toggle="pcs"]').click());
+          }catch(e){record.failed.push('pcs-filter-does-not-open');}
+        }
         if(view==='selfIntro'){
           await page.evaluate(()=>document.getElementById('selfIntroExportBtn')?.click());
           try{await page.waitForFunction(()=>document.getElementById('selfIntroExportPanel')?.hidden===false,null,{timeout:8000});

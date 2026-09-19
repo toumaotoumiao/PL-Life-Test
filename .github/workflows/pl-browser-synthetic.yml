@@ -42,6 +42,8 @@ jobs:
         run: node --test .github/pl-ci/round75-xml-formula-regression.test.cjs
       - name: Verify same-origin version probe respects restrictive CSP
         run: node --test .github/pl-ci/round77-csp-version-probe.test.cjs
+      - name: Guard PC filter and mobile More against ambiguous selectors
+        run: node --test .github/pl-ci/round79-pc-filter-reachability.test.cjs
       - name: Install pinned test-only browser runner
         run: npm install --no-save --no-audit --no-fund --prefix .github/pl-ci playwright@1.55.0
       - name: Install Chromium and OS dependencies
