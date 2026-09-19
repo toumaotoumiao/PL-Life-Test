@@ -62,6 +62,8 @@ jobs:
         run: node --test .github/pl-ci/round80-audit-coverage.test.cjs
       - name: Check cross-view modal visibility and Log test coverage
         run: node --test .github/pl-ci/round85-modal-visibility.test.cjs
+      - name: Guard all seven page structures and populated record width in Chromium
+        run: node .github/pl-ci/round87-view-flow-browser-audit.cjs
       - name: Type Log notes on both pages, save and reload in Chromium
         run: node .github/pl-ci/round82-log-live-browser.cjs
       - name: Audit mobile and desktop action visibility in Chromium

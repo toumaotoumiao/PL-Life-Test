@@ -55,10 +55,28 @@ const server=http.createServer((req,res)=>{
   await page.evaluate(()=>{
    if(!flushPlanInputSave())throw Error('plan note-only autosave not confirmed');
    if(!closePlanEditor())throw Error('saved plan editor did not close');
-   switchView('records');recordEditingIds.add('round82-record');renderRunRecords();
+   switchView('records');
+   // Exercise the same navigation + edit entry points as an actual user. A bare
+   // recordEditingIds.add() does not expand a default-collapsed record body.
+   if(!recordDetailReveal('round82-record'))throw Error('synthetic record could not be located in its module group');
+   if(!activateRecordEditing('round82-record'))throw Error('synthetic record could not enter edit mode');
   });
   const record=page.locator('#recordsBoard [data-record-id="round82-record"] [data-record-log-label="0"]');
-  if(!await record.isVisible())throw Error('record Log input not visible after switching to records view');
+  if(!await record.isVisible()) {
+   const details=await page.evaluate(()=>{
+    const row=document.querySelector('#recordsBoard [data-record-id="round82-record"]');
+    const input=row?.querySelector('[data-record-log-label="0"]');
+    const selected=document.querySelector('#recordsBoard .module-tab.active');
+    return {currentView,recordExists:!!runRecords.find(r=>r.id==='round82-record'),
+      rowExists:!!row,rowCollapsed:row?.classList.contains('is-collapsed'),
+      rowEditing:row?.classList.contains('is-editing'),inputExists:!!input,
+      hiddenAncestor:input?.closest('[hidden]')?.id||'',
+      selectedGroup:selected?.textContent?.trim().slice(0,80)||'',
+      currentGroup:selectedRecordGroupKey, defaultCollapsed:!collapseDefaultOpen(),
+      inputRect:input?[input.getBoundingClientRect().width,input.getBoundingClientRect().height]:null};
+   });
+   throw Error('record Log input not visible after opening actual edit mode: '+JSON.stringify(details));
+  }
   await record.fill('记录独立备注');
   const result=await page.evaluate(()=>{
    if(!flushRecordInputSave())throw Error('record note-only autosave not confirmed');
