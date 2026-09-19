@@ -11,6 +11,7 @@ function runtime(){
   const ctx={MAX_LOG_URLS:12,MAX_LOG_LABEL_LENGTH:30,runPlans:[],runRecords:[],escapeHTML:s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'),safeLogUrl:s=>/^https:\/\//.test(s)?s:'',uid:()=> 'synthetic-id',Date};
   vm.createContext(ctx);
   vm.runInContext(section('function normalizeLogRows(', '\nfunction isoDatePart('),ctx);
+  vm.runInContext(section('/* 桌次状态属于存档启动依赖', '/* ---------- 02. 自定义字段默认评价模板'),ctx);
   vm.runInContext(section('/* 第71轮：桌次的生命周期', 'function normalizeRunPlan('),ctx);
   vm.runInContext(section('function assertRunLogInputPreserved()', 'function assertPcCollectionInputPreserved('),ctx);
   return ctx;
