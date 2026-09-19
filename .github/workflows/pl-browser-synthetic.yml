@@ -52,6 +52,8 @@ jobs:
         run: node --test .github/pl-ci/round78-interface-contract.test.cjs
       - name: Run isolated real-browser checks
         run: node .github/pl-ci/run-browser-ci.cjs
+      - name: Guard browser audit against hidden-nav and onboarding false positives
+        run: node --test .github/pl-ci/round80-audit-coverage.test.cjs
       - name: Audit mobile and desktop action visibility in Chromium
         run: node .github/pl-ci/round78-ui-browser-audit.cjs
       - name: Upload synthetic-only metadata report

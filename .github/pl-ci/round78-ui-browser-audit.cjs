@@ -62,31 +62,61 @@ async function inspect(page,view,width){
       const context=await browser.newContext({viewport:{width,height:820},deviceScaleFactor:1,serviceWorkers:'block',acceptDownloads:false});
       const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(String(e.message).slice(0,160)));
       await page.goto(url,{waitUntil:'load',timeout:60000});
-      await page.waitForTimeout(250);
+      // The onboarding modal is delayed ~450ms; snapshots of the modal do NOT prove that
+      // buttons in the underlying page are accessible. Dismiss it using the real UI,
+      // only in this synthetic throwaway browser context. Never touch real user storage.
+      await page.waitForTimeout(850);
+      if(await page.locator('#onboardingBackdrop').isVisible()) {
+        await page.locator('#onboardingLaterBtn').click({timeout:8000});
+      }
+      if(await page.locator('#onboardingBackdrop').isVisible()) {
+        results.push({width,view:'onboarding',failed:['onboarding-still-blocks-page']});
+        await context.close();continue;
+      }
       for(const [view,button] of Object.entries(viewButtons)){
-        await page.evaluate(id=>document.getElementById(id)?.click(),button);
-        try{await page.waitForFunction(id=>document.getElementById(id)&&!document.getElementById(id).hidden,view+'View',{timeout:6000});}
-        catch(e){results.push({width,view,failed:['view-switch-timeout']});continue;}
+        // Real user navigation. The previous audit programmatically clicked DESKTOP
+        // buttons even when they were hidden on mobile, missing hit-target/overlay bugs.
+        const selector=width<=760
+          ? (view==='pcs'?'#profilesView .mobile-person-switch [data-view-target="pcs"]':`#mobileBottomNav [data-view-target="${view}"]`)
+          : `#${button}`;
+        try{
+          await page.locator(selector).click({timeout:10000});
+          await page.waitForFunction(id=>document.getElementById(id)&&!document.getElementById(id).hidden,view+'View',{timeout:10000});
+        }catch(e){
+          const diagnostic=await page.evaluate(()=>({
+            visibleViews:Object.entries({profiles:'profilesView',pcs:'pcsView',modules:'modulesView',plans:'plansView',records:'recordsView',selfIntro:'selfIntroView',stats:'statsView'}).filter(([,id])=>document.getElementById(id)?.hidden===false).map(([view])=>view),
+            blockingModal:['onboardingBackdrop','mobilePageSheetBackdrop','pcEditorBackdrop','actionDialogBackdrop'].filter(id=>document.getElementById(id)?.hidden===false),
+            activeNav:[...document.querySelectorAll('#mobileBottomNav .active')].map(el=>el.dataset.viewTarget),
+            navigationTarget:document.querySelector('#mobileBottomNav [data-view-target="modules"]')?.outerHTML.slice(0,220)||null
+          })).catch(err=>({diagnosticError:String(err.message)}));
+          const record={width,view,selector,diagnostic,error:String(e.message).slice(0,480),pageErrors:errors.slice(-5),failed:['physical-view-switch-failed']};
+          try{await page.screenshot({path:path.join(output,`ui-failure-${width}-${view}.png`),fullPage:false,timeout:5000});}catch(err){record.screenshotError=String(err.message).slice(0,120);}
+          results.push(record);continue;
+        }
         const record=await inspect(page,view,width);
         if(view==='pcs' && record.controls.filter.shown){
           // Test the actual wired filter action, not merely its geometric presence.
-          await page.evaluate(()=>document.querySelector('#pcsView [data-filter-toggle="pcs"]').click());
+          await page.locator('#pcsView [data-filter-toggle="pcs"]').click({timeout:5000});
           try{
             await page.waitForFunction(()=>innerWidth<=760
               ?document.getElementById('mobilePageSheetBackdrop')?.hidden===false
               :document.getElementById('pcFilterPanel')?.hidden===false,null,{timeout:4000});
-            if(width<=760) await page.evaluate(()=>document.querySelector('[data-mobile-page-sheet-close]')?.click());
-            else await page.evaluate(()=>document.querySelector('#pcsView [data-filter-toggle="pcs"]').click());
+            if(width<=760){
+              await page.locator('[data-mobile-page-sheet-close]').click({timeout:5000});
+              await page.waitForFunction(()=>document.getElementById('mobilePageSheetBackdrop')?.hidden===true,null,{timeout:5000});
+            } else {
+              await page.locator('#pcsView [data-filter-toggle="pcs"]').click({timeout:5000});
+            }
           }catch(e){record.failed.push('pcs-filter-does-not-open');}
         }
         if(view==='selfIntro'){
-          await page.evaluate(()=>document.getElementById('selfIntroExportBtn')?.click());
+          await page.locator('#selfIntroExportBtn').click({timeout:8000});
           try{await page.waitForFunction(()=>document.getElementById('selfIntroExportPanel')?.hidden===false,null,{timeout:8000});
             const panel=await page.evaluate(()=>{const r=document.getElementById('selfIntroExportPanel').getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,viewport:innerWidth,height:innerHeight};});
             record.exportPanel=panel;
             if(panel.left<0||panel.right>width+3||panel.top<0||panel.bottom>823)record.failed.push('export-panel-outside-viewport');
           }catch(e){record.failed.push('preference-export-panel-will-not-open');}
-          await page.evaluate(()=>document.getElementById('selfIntroExportPanelClose')?.click());
+          if(await page.locator('#selfIntroExportPanel').isVisible()) await page.locator('#selfIntroExportPanelClose').click({timeout:5000});
         }
         if(width===375&&['profiles','selfIntro','stats','records'].includes(view)){
           try{await page.screenshot({path:path.join(output,`ui-${width}-${view}.png`),fullPage:false});}catch(e){record.screenshotError=String(e.message).slice(0,120);}
@@ -97,7 +127,7 @@ async function inspect(page,view,width){
       await context.close();
     }
     const failures=results.filter(r=>r.failed&&r.failed.length);
-    const report={format:'pl-mobile-ui-synthetic-audit',siteVersion:(fs.readFileSync(path.join(site,'index.html'),'utf8').match(/const APP_UI_VERSION = "([^"]+)"/)||[])[1],scope:'fresh-empty-storage-local-only',widths:[375,430,768,1280],views:Object.keys(viewButtons),checks:results,failed:failures.length};
+    const report={format:'pl-mobile-ui-synthetic-audit-v2',siteVersion:(fs.readFileSync(path.join(site,'index.html'),'utf8').match(/const APP_UI_VERSION = "([^"]+)"/)||[])[1],scope:'fresh-empty-storage-local-only',widths:[375,430,768,1280],views:Object.keys(viewButtons),checks:results,failed:failures.length};
     fs.writeFileSync(path.join(output,'ui-audit-results.json'),JSON.stringify(report,null,2)+'\n');
     console.log('UI_AUDIT',report.siteVersion,'views',results.filter(r=>r.failed).length,'failures',failures.length);
     if(failures.length){for(const failure of failures)console.error('UI_FAIL',failure.width,failure.view,failure.failed.join(','));process.exitCode=1;}
