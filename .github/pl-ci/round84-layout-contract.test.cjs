@@ -28,6 +28,6 @@ test('mobile keeps its independent sticky filter sheet and sorting access',()=>{
 });
 test('page and service worker versions match',()=>{
  const version=html.match(/const APP_UI_VERSION = "([0-9.]+)"/)?.[1];
- assert.equal(version,'8.1.12.82');
+ assert.match(version||'',/^\d+\.\d+\.\d+\.\d+$/);
  assert(fs.readFileSync(path.join(base,'sw.js'),'utf8').includes(`v${version}`));
 });

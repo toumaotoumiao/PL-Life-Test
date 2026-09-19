@@ -48,3 +48,11 @@ test('closing a displayed guide does not affect the user data or completion mark
  assert.equal(env.guide.hidden,true);
  assert.equal(env.storage.getItem(),'');
 });
+test('already-completed onboarding must not reappear from a previously queued timer',async()=>{
+ const env=sandbox();
+ await env.context.maybeShowOnboarding();
+ assert.equal(env.scheduled.length,1);
+ env.storage.setItem('onboarding-test','1');
+ env.scheduled[0]();
+ assert.equal(env.guide.hidden,true);
+});

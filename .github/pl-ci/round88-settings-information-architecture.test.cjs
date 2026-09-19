@@ -51,7 +51,7 @@ test('backup primary has 2 visible actions, secondary tools tucked away',()=>{
 });
 test('version and cache are synchronized, data schema is not rewritten',()=>{
  const version=html.match(/const APP_UI_VERSION = "([0-9.]+)"/)?.[1];
- assert.equal(version,'8.1.12.82');assert(sw.includes('v'+version));
+ assert.match(version||'',/^\d+\.\d+\.\d+\.\d+$/);assert(sw.includes('v'+version));
  assert(!/data-settings-panel="version"[^>]*>[\s\S]*?id="importBtn"/.test(html.slice(html.indexOf('data-settings-panel="version"'),html.indexOf('data-settings-panel="advanced"'))));
 });
 
@@ -61,7 +61,7 @@ test('settings search expands newly categorized collapsed tools before scrolling
 });
 
 test('onboarding scheduled after startup cannot cover Settings or any open editor',()=>{
- assert.match(html,/function maybeShowOnboarding\(\)[\s\S]*?setTimeout\(\(\) => \{[\s\S]*?if \(anyModalSurfaceOpen\(\)/);
+ assert.match(html,/function maybeShowOnboarding\(\)[\s\S]*?setTimeout\(\(\) => \{[\s\S]*?if \(guideCompleted \|\| anyModalSurfaceOpen\(\)/);
  const settings=html.slice(html.indexOf('function openSettings()'),html.indexOf('function activateSettingsPanel(key)'));
  assert.match(settings,/closeOnboardingTemporarily\(\)/);
  assert(settings.indexOf('closeOnboardingTemporarily()')<settings.indexOf('showOverlay("settings")'));
