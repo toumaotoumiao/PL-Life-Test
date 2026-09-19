@@ -60,6 +60,8 @@ jobs:
         run: node .github/pl-ci/run-browser-ci.cjs
       - name: Guard browser audit against hidden-nav and onboarding false positives
         run: node --test .github/pl-ci/round80-audit-coverage.test.cjs
+      - name: Check cross-view modal visibility and Log test coverage
+        run: node --test .github/pl-ci/round85-modal-visibility.test.cjs
       - name: Type Log notes on both pages, save and reload in Chromium
         run: node .github/pl-ci/round82-log-live-browser.cjs
       - name: Audit mobile and desktop action visibility in Chromium

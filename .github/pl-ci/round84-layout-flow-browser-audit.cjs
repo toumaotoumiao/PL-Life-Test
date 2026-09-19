@@ -31,6 +31,9 @@ try {
   for(const width of widths){
     const page=await browser.newPage({viewport:{width,height:900},deviceScaleFactor:1,serviceWorkers:'block'});
     await page.setContent(html,{waitUntil:'domcontentloaded',timeout:60000});
+    // Cross-view dialogs must not be descendants of views hidden by navigation.
+    const nested=await page.evaluate(()=>[...document.querySelectorAll('section[id$="View"] [id$="Backdrop"]')].map(el=>el.id));
+    if(nested.length)report.failures.push({width,view:'dialog-contract',failures:nested.map(id=>'dialog-inside-hidden-view: '+id)});
     for(const view of pages){
       await page.evaluate(v=>{
         for(const name of ['profiles','pcs','modules','plans','records','selfIntro','stats'])

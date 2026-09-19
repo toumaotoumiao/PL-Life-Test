@@ -33,9 +33,24 @@ const server=http.createServer((req,res)=>{
    runPlans.push(normalizeRunPlan({id:'round82-plan',moduleId:mod.id,moduleName:mod.name,tableName:'计划测试桌',logUrls:[],logLabels:[]}));
    runRecords.push(normalizeRunRecord({id:'round82-record',moduleId:mod.id,moduleName:mod.name,tableName:'记录测试桌',logUrls:[],logLabels:[]}));
    if(!saveState())throw Error('initial synthetic archive failed to save');
+   // Cross-page opening is deliberate: the editor must not inherit a hidden plans view.
    openPlanEditor('round82-plan');
   });
   const plan=page.locator('#planEditorContent [data-plan-log-label="0"]');
+  await page.waitForTimeout(80);
+  if(!await plan.isVisible()) {
+   const details=await page.evaluate(()=>{
+    const input=document.querySelector('#planEditorContent [data-plan-log-label="0"]');
+    const backdrop=document.getElementById('planEditorBackdrop');
+    return {currentView, editorId:editingPlanId, backdropHidden:backdrop?.hidden,
+      hiddenAncestor:input?.closest('[hidden]')?.id||'',
+      inertAncestor:input?.closest('[inert]')?.id||'',
+      parentId:backdrop?.parentElement?.id||'',
+      display:input?getComputedStyle(input).display:'missing',
+      errors:document.getElementById('compatStartupError')?.textContent||''};
+   });
+   throw Error('plan Log input not visible: '+JSON.stringify(details));
+  }
   await plan.fill('计划独立备注');
   await page.evaluate(()=>{
    if(!flushPlanInputSave())throw Error('plan note-only autosave not confirmed');
@@ -43,6 +58,7 @@ const server=http.createServer((req,res)=>{
    switchView('records');recordEditingIds.add('round82-record');renderRunRecords();
   });
   const record=page.locator('#recordsBoard [data-record-id="round82-record"] [data-record-log-label="0"]');
+  if(!await record.isVisible())throw Error('record Log input not visible after switching to records view');
   await record.fill('记录独立备注');
   const result=await page.evaluate(()=>{
    if(!flushRecordInputSave())throw Error('record note-only autosave not confirmed');
