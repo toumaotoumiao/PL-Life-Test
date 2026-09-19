@@ -22,6 +22,7 @@ test('do not broaden other CSP permissions or module tool network access',()=>{
  assert.match(moduleHtml,/connect-src 'none'/);
 });
 test('new app and service worker versions agree after cache bust',()=>{
- assert.match(html,/const APP_UI_VERSION = "8\.1\.12\.73"/);
- assert.match(sw,/v8\.1\.12\.73/);
+ const version=html.match(/const APP_UI_VERSION = "([0-9.]+)";/)?.[1];
+ assert(version,'application version must exist');
+ assert(sw.includes('v'+version),'service-worker cache must match the application version');
 });

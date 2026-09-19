@@ -41,8 +41,9 @@ test('desktop filters and statistics do not inherit stretched grid rows',()=>{
   assert.match(css,/#statsView>\.stats-toolbar \{min-height:0!important;height:auto!important/);
 });
 test('site and worker release identity is in sync',()=>{
-  assert.match(html,/const APP_UI_VERSION = "8\.1\.12\.73"/);
-  assert.match(fs.readFileSync(path.join(site,'sw.js'),'utf8'),/v8\.1\.12\.73/);
+  const version=html.match(/const APP_UI_VERSION = "([0-9.]+)";/)?.[1];
+  assert(version,'application version must exist');
+  assert(fs.readFileSync(path.join(site,'sw.js'),'utf8').includes('v'+version));
 });
 
 test('module and record management retain their only mobile action entry',()=>{
