@@ -18,6 +18,19 @@ const server=http.createServer((req,res)=>{
 });
 const viewButtons={profiles:'profilesViewBtn',pcs:'pcsViewBtn',modules:'modulesViewBtn',plans:'plansViewBtn',records:'recordsViewBtn',selfIntro:'selfIntroViewBtn',stats:'statsViewBtn'};
 const results=[];let browser;
+
+async function completeSensitiveExportPreflight(page){
+  await page.waitForFunction(()=>document.getElementById('selfIntroExportPanel')?.hidden===false||document.getElementById('actionDialogBackdrop')?.hidden===false,null,{timeout:8000});
+  const dialog=page.locator('#actionDialogBackdrop');
+  if(!await dialog.isVisible()) return {shown:false,completed:false};
+  const title=(await page.locator('#actionDialogTitle').textContent()||'').trim();
+  if(title!=='导出前检查隐私？') throw new Error('unexpected export preflight dialog: '+title);
+  const select=page.locator('#actionDialogSelect');
+  if(await select.isVisible()) await select.selectOption('privacy');
+  await page.locator('#actionDialogConfirm').click({timeout:5000});
+  await page.waitForFunction(()=>document.getElementById('actionDialogBackdrop')?.hidden===true,null,{timeout:5000});
+  return {shown:true,completed:true,title};
+}
 async function inspect(page,view,width){
   const data=await page.evaluate(view=>{
     const root=document.getElementById(view+'View');
@@ -111,11 +124,20 @@ async function inspect(page,view,width){
         }
         if(view==='selfIntro'){
           await page.locator('#selfIntroExportBtn').click({timeout:8000});
-          try{await page.waitForFunction(()=>document.getElementById('selfIntroExportPanel')?.hidden===false,null,{timeout:8000});
+          try{
+            record.privacyPreflight=await completeSensitiveExportPreflight(page);
+            await page.waitForFunction(()=>document.getElementById('selfIntroExportPanel')?.hidden===false,null,{timeout:8000});
             const panel=await page.evaluate(()=>{const r=document.getElementById('selfIntroExportPanel').getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,viewport:innerWidth,height:innerHeight};});
             record.exportPanel=panel;
             if(panel.left<0||panel.right>width+3||panel.top<0||panel.bottom>823)record.failed.push('export-panel-outside-viewport');
-          }catch(e){record.failed.push('preference-export-panel-will-not-open');}
+          }catch(e){
+            record.exportFlowError=String(e.message).slice(0,240);
+            record.failed.push('preference-export-flow-will-not-complete');
+          }
+          if(await page.locator('#actionDialogBackdrop').isVisible()){
+            record.failed.push('privacy-preflight-left-blocking-page');
+            await page.locator('#actionDialogCancel').click({timeout:5000}).catch(()=>{});
+          }
           if(await page.locator('#selfIntroExportPanel').isVisible()) await page.locator('#selfIntroExportPanelClose').click({timeout:5000});
         }
         if(width===375&&['profiles','selfIntro','stats','records'].includes(view)){

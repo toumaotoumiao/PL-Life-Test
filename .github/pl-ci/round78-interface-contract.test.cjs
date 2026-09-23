@@ -59,3 +59,13 @@ test('module filter spans entire phone width; sort remains reachable in mobile s
   assert.match(css,/#modulesView \.module-native-controls \.filter-primary-row>#moduleNativeSort/);
   assert.match(html,/mobileProxySelect\("moduleNativeSort","排序"\)/);
 });
+
+test('public image exports keep the one-time privacy preflight and explicit re-entry contract',()=>{
+  assert.match(html,/const PRIVACY_EXPORT_ACK_KEY=/);
+  assert.match(html,/sensitiveImageExportButton\(btn\)/);
+  assert.match(html,/#statsExportBtn/);
+  assert.match(html,/#selfIntroExportBtn/);
+  assert.match(html,/导出前检查隐私？/);
+  assert.match(html,/privacyExportBypassOnce/);
+  assert.match(html,/btn\.click\(\)/);
+});

@@ -15,3 +15,10 @@ The CI suite is a long-lived release guard, not a snapshot of one historical ver
 - New public image-export entrypoints must be added to the current-release showcase contract when they are introduced.
 - Synthetic fixtures must remain fictional and must never include user backups, player names, original workbooks or screenshots containing personal data.
 - Release work is not complete until the current static tests pass and the Chromium steps have had a chance to run in GitHub Actions.
+
+
+## Browser-flow maintenance
+
+- Browser audits must follow the same visible user flow as the product. If a new privacy, safety, onboarding or confirmation preflight is introduced, the audit must operate that preflight and then continue to the target UI; do not bypass it with synthetic DOM clicks or leave it open for later view tests.
+- A blocking modal left by one audit step is a test failure in its own right because it can create misleading downstream navigation failures.
+- When an intentional product flow changes, update the live-browser audit and its static coverage contract in the same release.

@@ -19,3 +19,12 @@ test('failed navigation must preserve diagnostics and a screenshot',()=>{
  assert.match(file,/visibleViews/);
  assert.match(file,/ui-failure-/);
 });
+
+test('sensitive image export audit must complete the real privacy preflight instead of leaving a blocking modal',()=>{
+ assert.match(file,/completeSensitiveExportPreflight/);
+ assert.match(file,/actionDialogTitle/);
+ assert.match(file,/导出前检查隐私？/);
+ assert.match(file,/selectOption\('privacy'\)/);
+ assert.match(file,/privacy-preflight-left-blocking-page/);
+ assert.doesNotMatch(file,/preference-export-panel-will-not-open/);
+});
