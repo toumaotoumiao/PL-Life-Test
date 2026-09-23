@@ -22,3 +22,5 @@ The CI suite is a long-lived release guard, not a snapshot of one historical ver
 - Browser audits must follow the same visible user flow as the product. If a new privacy, safety, onboarding or confirmation preflight is introduced, the audit must operate that preflight and then continue to the target UI; do not bypass it with synthetic DOM clicks or leave it open for later view tests.
 - A blocking modal left by one audit step is a test failure in its own right because it can create misleading downstream navigation failures.
 - When an intentional product flow changes, update the live-browser audit and its static coverage contract in the same release.
+
+- `round93-privacy-export-resume.test.cjs` protects the privacy-export continuation contract: the original export action resumes only after the confirm click finishes bubbling, and dynamic export buttons are reacquired from the live DOM after privacy-mode rerenders.
