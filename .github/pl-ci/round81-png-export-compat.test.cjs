@@ -44,20 +44,32 @@ test('base64 compatibility path decodes large data in bounded chunks',async()=>{
  const result=await run({width:5,height:5,toDataURL(){return url}});
  assert.equal(result.size,raw.length);assert.deepEqual(Buffer.from(await result.arrayBuffer()),raw);
 });
-test('all six PNG export entrypoints share the same compatibility conversion',()=>{
- assert.equal((html.match(/canvasToPngBlobCompat\(canvas\)/g)||[]).length,7); // one declaration + six calls
- assert.match(html,/async function exportSelfIntroImage\([\s\S]*?canvasToPngBlobCompat\(canvas\)/);
- assert.match(html,/async function exportStatsImage\([\s\S]*?canvasToPngBlobCompat\(canvas\)/);
- assert.match(html,/async function exportHoOrganizerImage\([\s\S]*?canvasToPngBlobCompat\(canvas\)/);
- assert.match(html,/async function exportWeeklyAvailabilityImage\([\s\S]*?canvasToPngBlobCompat\(canvas\)/);
- assert.match(html,/async function exportPcSimpleCard\([\s\S]*?canvasToPngBlobCompat\(canvas\)/);
- assert.match(html,/uxExportPreviewDownload[\s\S]*?canvasToPngBlobCompat\(canvas\)/);
+test('public image exports route through the PNG compatibility helper or unified final preview',()=>{
+ assert.match(html,/async function preparePendingExportBlobs\([\s\S]*?canvasToPngBlobCompat\(canvas\)/);
+ const previewContracts=[
+  ['个人偏好',/async function exportSelfIntroImage\([\s\S]*?PLUnifiedExportPreview/],
+  ['详细时段',/async function exportWeeklyAvailabilityImage\([\s\S]*?PLUnifiedExportPreview/],
+  ['个人统计',/exportStatsImage=async function\(\)[\s\S]*?openUnifiedExportPreview/],
+  ['跑团整理',/exportHoOrganizerImage=async function\([\s\S]*?openUnifiedExportPreview/],
+  ['PC 简卡',/exportPcSimpleCard=async function\([\s\S]*?PLUnifiedExportPreview/],
+  ['单桌回顾',/async function openRecordShowcaseFinalPreview\([\s\S]*?PLUnifiedExportPreview/],
+  ['全年年历',/async function openPlannerYearShowcasePreview\([\s\S]*?PLUnifiedExportPreview/],
+  ['PC／模组展示',/async function finalPreview\(\)[\s\S]*?PLUnifiedExportPreview/]
+ ];
+ for(const [label,re] of previewContracts)assert.match(html,re,`${label} 必须进入统一最终预览`);
+ assert.match(html,/id="uxExportPreviewZip"/);
+ assert.match(html,/async function exportPendingAsZip\([\s\S]*?pcMakeZipEntries/);
 });
-test('visible version labels, runtime identifier and offline cache agree',()=>{
+test('current visible version labels, release note and offline cache derive from APP_UI_VERSION',()=>{
  const version=html.match(/const APP_UI_VERSION = "([0-9.]+)";/)?.[1];assert(version);
  assert(sw.includes('v'+version));
- assert(html.includes('页面版本：v'+version));
- assert(html.includes('id="versionUpdateSummary">v'+version));
- assert(html.includes('class="footer-meta-inline">v'+version));
- assert(html.includes('版本：v'+version+'　·　更新时间：'));
+ const contracts=[
+  ['数据健康版本',/id="appVersionHealthValue">v([0-9.]+)</],
+  ['版本摘要',/id="versionUpdateSummary">v([0-9.]+)/],
+  ['页面版本',/id="versionRuntimeDetails"><span>页面版本：v([0-9.]+)/],
+  ['页脚摘要',/class="footer-meta-inline">当前版本 v([0-9.]+)/],
+  ['页脚详情',/class="footer-meta">版本：v([0-9.]+)　·　更新时间：/],
+  ['首条版本记录',/id="releaseNotesBox"><div class="version-log-item"><strong class="version-log-version">v([0-9.]+)</]
+ ];
+ for(const [label,re] of contracts){const found=html.match(re)?.[1];assert.equal(found,version,`${label} 应与 APP_UI_VERSION 一致`);}
 });

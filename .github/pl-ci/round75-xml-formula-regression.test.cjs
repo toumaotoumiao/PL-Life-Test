@@ -40,6 +40,7 @@ function crossCheckHarness(formula){
   pcExcelCellNumber:()=>'',pcExcelKaguraSkillName:()=>'',pcExcelKaguraSkillValue:()=>'',normalizedEntityNameKey:s=>String(s).toLowerCase()};
  vm.createContext(c);
  vm.runInContext(source('function pcExcelDecodeXml(','function pcExcelWorkbookSheetPath('),c);
+ vm.runInContext(source('const PC_CARD_TIME_REFS=','function pcNormalizeCardTime('),c);
  vm.runInContext(source('async function pcExcelCrossCheckFixed(','function pcExcelReadOwnSupplement('),c);
  const pc={name:'',era:'',occupation:'',age:'',gender:'',residence:'',birthplace:'',coc:{},background:{}};
  return {c,pc};

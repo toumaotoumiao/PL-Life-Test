@@ -17,6 +17,7 @@ function context(){const c={Map,Set,Date,console,pcExcelColIndex:index,pcExcelCo
  vm.runInContext(code('function pcExcelA1(', 'function pcExcelKnownTemplate('),c);
  c.pcExcelKnownTemplate=()=>null;c.PC_EXCEL_KAGURA_TEMPLATE={id:'kagura-coc7',name:'CoC7'};c.pcExcelVerifiedVariant=()=>null;
  vm.runInContext(code('const PC_EXCEL_KAGURA_STANDARD_LAYOUT=', '/* 固定模板填写差异'),c);
+ vm.runInContext(code('const PC_CARD_TIME_REFS=', 'function pcNormalizeCardTime('),c);
  vm.runInContext(code('function pcExcelWriteIfChanged(', 'function pcExcelSupplementSheet('),c);
  vm.runInContext(code('function pcExcelKaguraCleanSkillBase(', 'function pcMergeNamedRows('),c);
  return c;}
