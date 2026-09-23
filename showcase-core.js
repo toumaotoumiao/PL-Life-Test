@@ -1,4 +1,4 @@
-/* PL收集梦想生活 · 用户展示导出编排核心 v1.1.0
+/* PL收集梦想生活 · 用户展示导出编排核心 v1.2.0
    负责模块选择、排序、整行/半栏、列位置与分页规划；具体画布渲染由各展示页面提供。 */
 (function(root,factory){
   'use strict';const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else if(root)root.PLShowcaseCore=api;
@@ -35,9 +35,11 @@
     else if(next.widths[source]==='full')delete next.columns[source];
     return next;
   }
+  function normalizeDensity(value){return ['compact','standard','relaxed'].includes(value)?value:'standard';}
+  function densityProfile(value){const mode=normalizeDensity(value);if(mode==='compact')return {mode,gap:12,pad:24,pageHeight:3200,fontScale:.94};if(mode==='relaxed')return {mode,gap:28,pad:42,pageHeight:2600,fontScale:1.06};return {mode,gap:20,pad:34,pageHeight:2800,fontScale:1};}
   function planPages(blocks,{pageHeight=1600,top=0,bottom=0,gap=18,minFirstBlock=0}={}){
     const limit=Math.max(1,Number(pageHeight)||1600),usable=Math.max(1,limit-(Number(top)||0)-(Number(bottom)||0)),pages=[];let page=[],used=0;
     (Array.isArray(blocks)?blocks:[]).forEach((block,index)=>{const h=Math.max(0,Number(block&&block.height)||0),extra=page.length?(Number(gap)||0):0;if(page.length&&used+extra+h>usable&&(used>=minFirstBlock||index>0)){pages.push(page);page=[];used=0;}page.push(block);used+=(page.length>1?(Number(gap)||0):0)+h;});if(page.length)pages.push(page);return pages;
   }
-  return {defaultState,normalizeState,compactColumns,layoutRows,place,planPages};
+  return {defaultState,normalizeState,compactColumns,layoutRows,place,normalizeDensity,densityProfile,planPages};
 });

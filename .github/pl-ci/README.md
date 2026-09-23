@@ -24,3 +24,21 @@ The CI suite is a long-lived release guard, not a snapshot of one historical ver
 - When an intentional product flow changes, update the live-browser audit and its static coverage contract in the same release.
 
 - `round93-privacy-export-resume.test.cjs` protects the privacy-export continuation contract: the original export action resumes only after the confirm click finishes bubbling, and dynamic export buttons are reacquired from the live DOM after privacy-mode rerenders.
+- `round94-calendar-separation.test.cjs` protects Calendar 2.0: personal statistics must show module names and KP/PL identity in calendar cells, while Planner annual export owns a separate scheduling/agenda renderer with plan/archive status instead of reusing the statistics timeline.
+- Round95 guards Recap 2.0: single-table Log/web output, person-display modes, integrated record recap using the current query, and visible PL/KP organizer export composition.
+
+## PC / module export 2.0 maintenance
+
+- `round96-pc-module-export2-contract.test.cjs` keeps the public PC export image-first: the primary PC menu exposes the unified image dossier plus the independent CoC7 Excel export, while legacy HTML/package/card outputs are not restored as competing primary actions.
+- The complete PC image contract must continue to cover the dossier fields already present in the archive (identity, CoC7 values, skills, background sections, inventory/assets, weapons, growth snapshots, run history and PC notes) rather than regressing to the old short card.
+- Module public export defaults to the integrated high-density dossier. Table history keeps stable `moduleId` matching and separately controls people, PC and HO disclosure; hidden-person mode must never fall back to raw KP/PL names.
+- PC/module export code remains a read-only presentation layer. New display controls must not rewrite `pcs`, `modules`, `runRecords`, attachment blobs or backup formats.
+
+
+## Public-name and density 2.0 maintenance
+
+- `round97-public-name-density-contract.test.cjs` keeps PL archive names and public export names separate. `publicName` is optional and persisted in canonical identity. It may participate as an additional search alias, but must never replace the archive name, relationship identity, or raw saved name.
+- Public image flows that expose people use the same four modes: public name, archive name, numbered anonymity, or hidden. Privacy mask always wins and forces anonymous output.
+- Density controls use the common compact / standard / relaxed vocabulary. High-density mode must reduce whitespace and increase page capacity; a label-only density switch is not sufficient.
+
+- Schema 26 explicitly owns the optional public-name field. Older archives must still load with an empty public name and round-trip without rewriting the archive name.
