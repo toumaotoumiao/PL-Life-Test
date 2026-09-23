@@ -42,3 +42,22 @@ The CI suite is a long-lived release guard, not a snapshot of one historical ver
 - Density controls use the common compact / standard / relaxed vocabulary. High-density mode must reduce whitespace and increase page capacity; a label-only density switch is not sufficient.
 
 - Schema 26 explicitly owns the optional public-name field. Older archives must still load with an empty public name and round-trip without rewriting the archive name.
+
+## PC export runtime-boundary maintenance
+
+- `round98-organizer-free-layout.test.cjs` is part of the live GitHub Actions release gate; free-lane layout, insertion and column locks must not be local-only checks.
+- `round99-pc-export-runtime-boundary.test.cjs` protects the PC snapshot/export module boundary. Presentation code must consume the read-only `PLPCSnapshotTools` bridge instead of calling helpers that are private to another IIFE.
+- PC/module preview generation must catch runtime failures, replace the loading placeholder with a retryable failure state, and report that formal archives and unsaved drafts were not rewritten.
+- The compatibility-level runtime error banner must remain dismissible, keep copyable diagnostics behind a disclosure, and allow later independent errors to surface again after dismissal.
+## Public image-export convergence maintenance
+
+- `round100-public-image-export-convergence.test.cjs` is the whole-site presentation-export audit. Public-facing PNG flows must converge on the unified final preview; they must not silently fall back to direct downloads when the preview layer fails.
+- Retired PC HTML/package/simple-card public actions must stay retired. The HTML builder may remain only as an internal technical/batch-archive dependency where preservation, not public presentation, is the goal.
+- File-oriented workflows such as full backup ZIP, JSON/Excel export, raw media download and migration diagnostics remain file exports; do not wrap them in the public-image composer merely for visual consistency.
+- When a new public image-export entrypoint is added, update Round100 and the current-release contract in the same release.
+## Calendar readability 2.1 maintenance
+
+- `round101-calendar-readability-cleanup.test.cjs` keeps the public annual calendar readable: live and exported calendars show full same-day module names, statistics calendar segments are forced onto separate half-year pages, and normal archived entries do not waste space on redundant “已／已归档” labels.
+- The public statistics surface intentionally omits `PL 参团次数分布`; do not replace it with annual-highlight or completed-module cards unless the product requirement changes explicitly.
+- Planner annual export keeps three distinct purposes: one-page overview, complete half-year calendar pages, and a dense agenda list. Do not merge these back into one duplicate calendar-plus-list output.
+

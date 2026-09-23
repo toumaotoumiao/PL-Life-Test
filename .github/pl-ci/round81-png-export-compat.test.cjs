@@ -47,16 +47,17 @@ test('base64 compatibility path decodes large data in bounded chunks',async()=>{
 test('public image exports route through the PNG compatibility helper or unified final preview',()=>{
  assert.match(html,/async function preparePendingExportBlobs\([\s\S]*?canvasToPngBlobCompat\(canvas\)/);
  const previewContracts=[
-  ['个人偏好',/async function exportSelfIntroImage\([\s\S]*?PLUnifiedExportPreview/],
-  ['详细时段',/async function exportWeeklyAvailabilityImage\([\s\S]*?PLUnifiedExportPreview/],
+  ['个人偏好',/async function exportSelfIntroImage\([\s\S]*?PLRequireUnifiedExportPreview/],
+  ['详细时段',/async function exportWeeklyAvailabilityImage\([\s\S]*?PLRequireUnifiedExportPreview/],
   ['个人统计',/exportStatsImage=async function\(\)[\s\S]*?openUnifiedExportPreview/],
   ['跑团整理',/exportHoOrganizerImage=async function\([\s\S]*?openUnifiedExportPreview/],
-  ['PC 简卡',/exportPcSimpleCard=async function\([\s\S]*?PLUnifiedExportPreview/],
   ['单桌回顾',/async function openRecordShowcaseFinalPreview\([\s\S]*?PLUnifiedExportPreview/],
   ['全年年历',/async function openPlannerYearShowcasePreview\([\s\S]*?PLUnifiedExportPreview/],
-  ['PC／模组展示',/async function finalPreview\(\)[\s\S]*?PLUnifiedExportPreview/]
+  ['PC／模组档案',/async function finalPreview\(\)[\s\S]*?PLUnifiedExportPreview/]
  ];
  for(const [label,re] of previewContracts)assert.match(html,re,`${label} 必须进入统一最终预览`);
+ assert.match(html,/exportPcSimpleCard=async function\([\s\S]*?PLPCShowcaseOpenDraft/,'旧 PC 简卡兼容入口只能转到统一角色档案导出');
+ assert.doesNotMatch(html,/requestImageFileDownload|reportImageFileDownloadFailure/,'公众图片不应保留绕过最终预览的直接下载兜底');
  assert.match(html,/id="uxExportPreviewZip"/);
  assert.match(html,/async function exportPendingAsZip\([\s\S]*?pcMakeZipEntries/);
 });

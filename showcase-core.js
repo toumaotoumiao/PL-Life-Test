@@ -1,4 +1,4 @@
-/* PL收集梦想生活 · 用户展示导出编排核心 v1.2.0
+/* PL收集梦想生活 · 用户展示导出编排核心 v1.3.0
    负责模块选择、排序、整行/半栏、列位置与分页规划；具体画布渲染由各展示页面提供。 */
 (function(root,factory){
   'use strict';const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else if(root)root.PLShowcaseCore=api;
@@ -37,9 +37,20 @@
   }
   function normalizeDensity(value){return ['compact','standard','relaxed'].includes(value)?value:'standard';}
   function densityProfile(value){const mode=normalizeDensity(value);if(mode==='compact')return {mode,gap:12,pad:24,pageHeight:3200,fontScale:.94};if(mode==='relaxed')return {mode,gap:28,pad:42,pageHeight:2600,fontScale:1.06};return {mode,gap:20,pad:34,pageHeight:2800,fontScale:1};}
+
+  function packFreeLanes(items,{laneCount=3,startY=0,gap=0}={}){
+    const lanes=Math.max(1,Math.floor(Number(laneCount)||1)),heights=Array(lanes).fill(Number(startY)||0),placements=[];
+    (Array.isArray(items)?items:[]).forEach(raw=>{const span=Math.max(1,Math.min(lanes,Math.floor(Number(raw&&raw.span)||1))),maxLane=Math.max(0,lanes-span),lane=Math.max(0,Math.min(maxLane,Math.floor(Number(raw&&raw.lane)||0))),height=Math.max(0,Number(raw&&raw.height)||0),y=Math.max(...heights.slice(lane,lane+span)),next=y+height+(Number(gap)||0),item=Object.assign({},raw,{lane,span,y,height});placements.push(item);for(let i=lane;i<lane+span;i++)heights[i]=next;});
+    return {placements,heights};
+  }
+  function insertIntoFreeLane(order,layout,{sourceId,targetId='',targetLane=0,after=false,laneCount=3}={}){
+    const source=text(sourceId),target=text(targetId),nextOrder=(Array.isArray(order)?order.map(text):[]).filter(Boolean),nextLayout=Object.assign({},layout||{});if(!source||!nextOrder.includes(source))return {order:nextOrder,layout:nextLayout};
+    const current=Object.assign({lane:0,span:1,locked:false},nextLayout[source]||{}),lanes=Math.max(1,Math.floor(Number(laneCount)||1)),span=Math.max(1,Math.min(lanes,Math.floor(Number(current.span)||1)));current.span=span;current.lane=Math.max(0,Math.min(lanes-span,Math.floor(Number(targetLane)||0)));nextLayout[source]=current;
+    const stripped=nextOrder.filter(id=>id!==source);if(target&&stripped.includes(target)){let idx=stripped.indexOf(target)+(after?1:0);stripped.splice(idx,0,source);}else{const same=stripped.filter(id=>{const spec=nextLayout[id]||{};return Math.floor(Number(spec.lane)||0)===current.lane;}),last=same[same.length-1],idx=last?stripped.indexOf(last)+1:stripped.length;stripped.splice(idx,0,source);}return {order:stripped,layout:nextLayout};
+  }
   function planPages(blocks,{pageHeight=1600,top=0,bottom=0,gap=18,minFirstBlock=0}={}){
     const limit=Math.max(1,Number(pageHeight)||1600),usable=Math.max(1,limit-(Number(top)||0)-(Number(bottom)||0)),pages=[];let page=[],used=0;
     (Array.isArray(blocks)?blocks:[]).forEach((block,index)=>{const h=Math.max(0,Number(block&&block.height)||0),extra=page.length?(Number(gap)||0):0;if(page.length&&used+extra+h>usable&&(used>=minFirstBlock||index>0)){pages.push(page);page=[];used=0;}page.push(block);used+=(page.length>1?(Number(gap)||0):0)+h;});if(page.length)pages.push(page);return pages;
   }
-  return {defaultState,normalizeState,compactColumns,layoutRows,place,normalizeDensity,densityProfile,planPages};
+  return {defaultState,normalizeState,compactColumns,layoutRows,place,normalizeDensity,densityProfile,packFreeLanes,insertIntoFreeLane,planPages};
 });

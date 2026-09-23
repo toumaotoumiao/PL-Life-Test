@@ -40,14 +40,16 @@ test('all current public showcase flows converge on the unified final preview',(
   ['weekly availability','async function exportWeeklyAvailabilityImage'],
   ['statistics','exportStatsImage=async function'],
   ['organizer','exportHoOrganizerImage=async function'],
-  ['PC simple card','exportPcSimpleCard=async function']
+  ['PC/module dossier','async function finalPreview()']
  ];
  for(const [label,marker] of contracts){
   const i=html.indexOf(marker);assert(i>=0,`${label} entrypoint missing`);
-  const tail=html.slice(i,i+10000);
-  assert(/(?:PLUnifiedExportPreview|openUnifiedExportPreview)/.test(tail),`${label} must use unified final preview`);
+  const tail=html.slice(i,i+12000);
+  assert(/(?:PLRequireUnifiedExportPreview|PLUnifiedExportPreview|openUnifiedExportPreview)/.test(tail),`${label} must use unified final preview`);
  }
+ assert.match(html,/exportPcSimpleCard=async function\([\s\S]*?PLPCShowcaseOpenDraft/,'legacy PC card calls must route into the unified dossier composer');
  assert(html.includes('window.PLUnifiedExportPreview=openUnifiedExportPreview'));
+ assert(html.includes('window.PLRequireUnifiedExportPreview=function'));
 });
 
 test('multi-page image export keeps ZIP fallback and PNG compatibility conversion',()=>{

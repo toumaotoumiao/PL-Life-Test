@@ -56,6 +56,16 @@ jobs:
         run: node --test .github/pl-ci/round95-recap2-contract.test.cjs
       - name: Guard PC and module archive-image export 2.0
         run: node --test .github/pl-ci/round96-pc-module-export2-contract.test.cjs
+      - name: Guard public-name persistence and shared density 2.0
+        run: node --test .github/pl-ci/round97-public-name-density-contract.test.cjs
+      - name: Guard organizer free-lane layout, insertion and locks
+        run: node --test .github/pl-ci/round98-organizer-free-layout.test.cjs
+      - name: Guard PC export runtime boundary and dismissible compatibility errors
+        run: node --test .github/pl-ci/round99-pc-export-runtime-boundary.test.cjs
+      - name: Guard whole-site public image export convergence and retired PC routes
+        run: node --test .github/pl-ci/round100-public-image-export-convergence.test.cjs
+      - name: Guard full calendar readability and retire low-value public stats
+        run: node --test .github/pl-ci/round101-calendar-readability-cleanup.test.cjs
       - name: Verify note-only Log and verified-save failure isolation
         run: node --test .github/pl-ci/round82-log-save-root-cause.test.cjs
       - name: Audit whole-site verified-save boundaries and legacy Log integrity

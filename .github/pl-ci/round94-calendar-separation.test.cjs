@@ -19,16 +19,18 @@ function extractFunction(name){
   throw new Error(`unterminated ${name}`);
 }
 
-test('personal statistics calendar exposes module names instead of dot-only activity marks',()=>{
+test('personal statistics calendar exposes every module label instead of dot-only or truncated cells',()=>{
   const fn=extractFunction('statsYearCalendarHTML');
-  assert.match(fn,/statsCalendarDisplayItems\(rows,2\)/);
+  assert.match(fn,/statsCalendarDisplayItems\(rows,999\)/);
   assert.match(fn,/stats-day-event/);
-  assert.match(fn,/statsCalendarShortName\(item\.label/);
+  assert.match(fn,/escapeHTML\(item\.label\)/);
+  assert.doesNotMatch(fn,/statsCalendarShortName\(item\.label/,'live annual calendar should not shorten module names');
   assert.doesNotMatch(fn,/stats-day-dot/,'year review calendar must not fall back to unexplained dot-only cells');
+  assert.doesNotMatch(fn,/另 \$\{display\.extra\} 桌/,'complete calendar should not hide extra same-day runs behind +N');
   assert.match(html,/我的跑团回顾年历/);
 });
 
-test('calendar display grouping keeps table identity and reports multiple runs on one day',()=>{
+test('calendar display grouping keeps table identity and can report multiple runs on one day',()=>{
   const src=[extractFunction('statsCalendarRoleCode'),extractFunction('statsCalendarShortName'),extractFunction('statsCalendarDisplayItems')].join('\n');
   const context={Map,Set,String,Boolean,Math}; vm.createContext(context); vm.runInContext(src,context);
   const rows=[
@@ -45,11 +47,13 @@ test('calendar display grouping keeps table identity and reports multiple runs o
   assert.equal(out.extra,1);
 });
 
-test('planner annual export is a scheduling view, not a reused statistics timeline',()=>{
+test('planner annual export has separate overview, complete-calendar and agenda purposes',()=>{
   assert.match(html,/>全年排期图</);
-  assert.match(html,/>模组排期年历</);
-  assert.match(html,/>年历＋排期清单</);
+  assert.match(html,/>年度总览</);
+  assert.match(html,/>完整年历</);
+  assert.match(html,/>排期清单</);
   assert.match(html,/function buildPlannerYearShowcaseCanvases\(/);
+  assert.match(html,/function drawPlannerCompleteCalendarPage\(/);
   assert.match(html,/function drawPlannerYearAgendaBlock\(/);
   const start=html.indexOf('async function openPlannerYearShowcasePreview()');
   const end=html.indexOf('let selfIntroDraft = null;',start);
@@ -60,11 +64,12 @@ test('planner annual export is a scheduling view, not a reused statistics timeli
   assert.match(open,/排期／执行视角，不等同于个人统计年度回顾/);
 });
 
-test('legacy timeline preference migrates to agenda and old calendar API routes to planner export',()=>{
+test('legacy timeline preference migrates to agenda and complete calendar is accepted',()=>{
   const normalizer=extractFunction('normalizePlannerYearShowcaseState');
   const context={}; vm.createContext(context); vm.runInContext(normalizer,context);
   assert.equal(context.normalizePlannerYearShowcaseState({mode:'timeline'}).mode,'agenda');
   assert.equal(context.normalizePlannerYearShowcaseState({mode:'calendar'}).mode,'calendar');
+  assert.equal(context.normalizePlannerYearShowcaseState({mode:'complete'}).mode,'complete');
   assert.match(html,/async function exportCurrentYearCalendarImage\(\)\{return openPlannerYearShowcasePreview\(\);\}/);
   assert.match(html,/exportCurrentYearCalendarImage=async function\(\)\{return openPlannerYearShowcasePreview\(\);\}/);
 });
