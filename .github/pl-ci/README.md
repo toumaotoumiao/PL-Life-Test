@@ -60,4 +60,6 @@ The CI suite is a long-lived release guard, not a snapshot of one historical ver
 - `round101-calendar-readability-cleanup.test.cjs` keeps the public annual calendar readable: live and exported calendars show full same-day module names, statistics calendar segments are forced onto separate half-year pages, and normal archived entries do not waste space on redundant “已／已归档” labels.
 - The public statistics surface intentionally omits `PL 参团次数分布`; do not replace it with annual-highlight or completed-module cards unless the product requirement changes explicitly.
 - Planner annual export keeps three distinct purposes: one-page overview, complete half-year calendar pages, and a dense agenda list. Do not merge these back into one duplicate calendar-plus-list output.
+- `round102-environment-isolation.test.cjs` guards pathname-scoped localStorage / IndexedDB / Cache Storage / BroadcastChannel separation between `/PL-Life/` and `/PL-Life-Test/`.
+- `round102-environment-isolation-browser.cjs` performs the same-origin dual-site check in Chromium after Playwright installation; the test site may copy legacy data, but test writes and cache cleanup must leave production bytes untouched.
 
