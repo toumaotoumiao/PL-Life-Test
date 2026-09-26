@@ -221,19 +221,39 @@ jobs:
           PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
         run: node .github/pl-ci/round143-planner-agenda-continuity-browser.cjs
       - name: Round141 Chromium PC full archive two-column geometry
-        run: node .github/pl-ci/round141-pc-archive-two-column-browser.cjs
+        id: round141_browser
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node .github/pl-ci/round141-pc-archive-two-column-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round141-pc-archive-two-column-browser.log"
       - name: Round148 Chromium multi-rule PC template geometry and preservation
+        id: round148_browser
+        continue-on-error: true
+        shell: bash
         env:
           PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
-        run: node .github/pl-ci/round148-multirule-pc-templates-browser.cjs
+        run: |
+          set -o pipefail
+          node .github/pl-ci/round148-multirule-pc-templates-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round148-multirule-pc-templates-browser.log"
       - name: Round149 Chromium historical and current complete ZIP binary fidelity
+        id: round149_browser
+        continue-on-error: true
+        shell: bash
         env:
           PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
-        run: node .github/pl-ci/round149-multirule-zip-browser.cjs
+        run: |
+          set -o pipefail
+          node .github/pl-ci/round149-multirule-zip-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round149-multirule-zip-browser.log"
       - name: Round151 native Chromium restore reload and complete ZIP re-export
+        id: round151_browser
+        continue-on-error: true
+        shell: bash
         env:
           PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
-        run: node .github/pl-ci/round151-native-storage-roundtrip-browser.cjs
+        run: |
+          set -o pipefail
+          node .github/pl-ci/round151-native-storage-roundtrip-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round151-native-storage-roundtrip-browser.log"
       - name: Round124 real Chromium preference and stats export touch geometry
         run: node .github/pl-ci/round124-preference-stats-browser.cjs
       - name: Verify production and test isolation in a real browser
@@ -262,14 +282,23 @@ jobs:
         run: node --test .github/pl-ci/round84-layout-contract.test.cjs
       - name: Audit populated synthetic cards, filter expansion and UI entry geometry
         run: node .github/pl-ci/round84-layout-flow-browser-audit.cjs
-      - name: Enforce Round134 result after subsequent browser checks
+      - name: Enforce critical browser results after subsequent checks
         if: always()
         shell: bash
         run: |
-          if [ "${{ steps.round134_browser.outcome }}" != "success" ]; then
-            echo "Round134 failed; diagnostics are attached in pl-synthetic-browser-result."
-            exit 1
-          fi
+          failed=0
+          for check in \
+            "Round134:${{ steps.round134_browser.outcome }}" \
+            "Round141:${{ steps.round141_browser.outcome }}" \
+            "Round148:${{ steps.round148_browser.outcome }}" \
+            "Round149:${{ steps.round149_browser.outcome }}" \
+            "Round151:${{ steps.round151_browser.outcome }}"; do
+            if [ "${check#*:}" != "success" ]; then
+              echo "${check%%:*} failed; see its log in pl-synthetic-browser-result."
+              failed=1
+            fi
+          done
+          exit "$failed"
       - name: Upload synthetic-only metadata report
         if: always()
         uses: actions/upload-artifact@v7

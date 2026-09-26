@@ -55,3 +55,13 @@ test('Round141 same paired block is drawn in paged and semantic continuous expor
  assert.match(continuous,/b\.drawPanel\(ctx,x,y,w,t\)/);
  assert.match(html,/const APP_UI_VERSION = "8\.1\.12\.\d+"/);
 });
+
+test('Round141 browser geometry fixture uses real multi-rule gate with explicit CoC7 metadata',()=>{
+ const browser=fs.readFileSync(path.join(__dirname,'round141-pc-archive-two-column-browser.cjs'),'utf8');
+ assert.match(browser,/const isCocSource=sourceBetween\('function pcRuleIsCoc\(pc\)\{',/);
+ assert.match(browser,/const normalizeMetaSource=sourceBetween\('function normalizeModuleRuleMeta/);
+ assert.match(browser,/ruleMeta:\{familyId:'brp',systemId:'coc',editionId:'7e'/);
+ assert.match(browser,/await page\.addScriptTag\(\{content:stubCode\+/);
+ assert.match(browser,/\+normalizeMetaSource\+/);
+ assert.match(browser,/\+isCocSource\+/);
+});
