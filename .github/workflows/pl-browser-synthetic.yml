@@ -68,6 +68,102 @@ jobs:
         run: node --test .github/pl-ci/round101-calendar-readability-cleanup.test.cjs
       - name: Guard production and test environment storage isolation
         run: node --test .github/pl-ci/round102-environment-isolation.test.cjs
+      - name: Guard integrated recap readable continuous-preview layout
+        run: node --test .github/pl-ci/round103-records-recap-preview-layout.test.cjs
+      - name: Guard integrated recap modal gutters and aligned content baseline
+        run: node --test .github/pl-ci/round111-records-recap-gutter-contract.test.cjs
+      - name: Guard single-record recap numeric height returns at runtime
+        run: node --test .github/pl-ci/round112-single-record-showcase-height-runtime.test.cjs
+      - name: Guard optional module table-history export
+        run: node --test .github/pl-ci/round113-module-history-optional.test.cjs
+      - name: Guard three-option export switch layout
+        run: node --test .github/pl-ci/round114-three-option-switch-layout.test.cjs
+      - name: Guard statistics export preset runtime helpers
+        run: node --test .github/pl-ci/round115-stats-export-preset-runtime.test.cjs
+      - name: Guard export UI reduction and unified visual hierarchy
+        run: node --test .github/pl-ci/round116-export-ui-reduction-contract.test.cjs
+      - name: Guard unified main-page query workbench reduction
+        run: node --test .github/pl-ci/round117-main-query-workbench-reduction.test.cjs
+      - name: Guard main content card reduction
+        run: node --test .github/pl-ci/round118-main-content-card-reduction.test.cjs
+      - name: Guard editor hierarchy reduction
+        run: node --test .github/pl-ci/round119-editor-hierarchy-reduction.test.cjs
+      - name: Guard final UI reduction closeout rules
+        run: node --test .github/pl-ci/round120-ui-closeout.test.cjs
+      - name: Guard formal visual acceptance polish
+        run: node --test .github/pl-ci/round121-formal-visual-acceptance.test.cjs
+      - name: Round122 main list navigation acceptance
+        run: node --test .github/pl-ci/round122-main-list-navigation-acceptance.test.cjs
+      - name: Round123 plan and record acceptance
+        run: node --test .github/pl-ci/round123-plan-record-acceptance.test.cjs
+      - name: Round124 preference and statistics disclosure plus mobile exports
+        run: node --test .github/pl-ci/round124-preference-stats-acceptance.test.cjs
+      - name: Round125 final image export closeout and half-column canvas safety
+        run: node --test .github/pl-ci/round125-final-export-closeout.test.cjs
+      - name: Guard unified export format and full-length PNG runtime
+        run: node --test .github/pl-ci/round126-unified-export-layout.test.cjs
+      - name: Guard module card full metadata without redundant disclosure
+        run: node --test .github/pl-ci/round127-module-card-metadata.test.cjs
+      - name: Guard semantic continuous PNG without repeated archive headers
+        run: node --test .github/pl-ci/round128-continuous-export-semantic.test.cjs
+      - name: Round129 source/final export live preview parity
+        run: node --test .github/pl-ci/round129-source-export-live-sync.test.cjs
+      - name: Round130 whole-site visual comfort and touch-target contract
+        run: node --test .github/pl-ci/round130-visual-comfort-contract.test.cjs
+      - name: Round131 PL, PC and module list typography and wrap
+        run: node --test .github/pl-ci/round131-main-list-polish.test.cjs
+      - name: Round132 plan and record visual comfort
+        run: node --test .github/pl-ci/round132-plan-record-visual.test.cjs
+      - name: Round133 preference stats settings visual contract
+        run: node --test .github/pl-ci/round133-preference-stats-settings-comfort.test.cjs
+      - name: Round134 export and public preview visual closeout
+        run: node --test .github/pl-ci/round134-export-visual-closeout.test.cjs
+      - name: Round135 real page acceptance and mobile search workbench
+        run: node --test .github/pl-ci/round135-real-page-acceptance.test.cjs
+      - name: Round136 stats exporter and mobile editor flow runtime contract
+        run: node --test .github/pl-ci/round136-editor-export-flow.test.cjs
+      - name: Round137 guard statistics exporter internal data and failure feedback
+        run: node --test .github/pl-ci/round137-stats-preview-runtime.test.cjs
+      - name: Round138 objective product copy
+        run: node --test .github/pl-ci/round138-objective-copy.test.cjs
+      - name: Round139 statistics panel disclosure contract
+        run: node --test .github/pl-ci/round139-stats-panel-collapse.test.cjs
+      - name: Round140 statistics scoped identity and extent contract
+        run: node --test .github/pl-ci/round140-stats-panel-scope.test.cjs
+      - name: Round143 planner agenda continuity and measured white background
+        run: node --test .github/pl-ci/round143-planner-agenda-continuity.test.cjs
+      - name: Round142 preview touch target and CI diagnostics contract
+        run: node --test .github/pl-ci/round142-export-preview-ci-regression.test.cjs
+      - name: Round141 PC export compact two-column layout
+        run: node --test .github/pl-ci/round141-pc-archive-two-column.test.cjs
+      - name: Round145 multi-rule PC and unified query regression
+        run: node --test .github/pl-ci/round145-multirule-stage2.test.cjs
+      - name: Round146 per-table rule snapshot round trip
+        run: node --test .github/pl-ci/round146-table-rule-snapshot.test.cjs
+      - name: Round147 rule taxonomy filtering and statistics without new preference fields
+        run: node --test .github/pl-ci/round147-rule-filter-stats.test.cjs
+      - name: Round148 multi-rule PC archival template and preservation regression
+        run: node --test .github/pl-ci/round148-multirule-pc-templates.test.cjs
+      - name: Round149 multi-rule historical restore and duplicate-cleanup safety
+        run: node --test .github/pl-ci/round149-multirule-restore-guard.test.cjs
+      - name: Round150 frozen-source and saved-archive recovery evidence
+        run: node --test .github/pl-ci/round150-multirule-restore-evidence.test.cjs
+      - name: Round150 transaction commit rollback and crash-journal runtime
+        run: node --test .github/pl-ci/round150-transaction-runtime.test.cjs
+      - name: Round151 native IndexedDB restoration test source contract
+        run: node --test .github/pl-ci/round151-native-storage-roundtrip.test.cjs
+      - name: Guard PC complete-archive continuous background and stable layout geometry
+        run: node --test .github/pl-ci/round104-pc-archive-layout-contract.test.cjs
+      - name: Guard calendar role color semantics without K/P glyph clutter
+        run: node --test .github/pl-ci/round105-calendar-role-color-contract.test.cjs
+      - name: Guard inline export privacy controls without blocking preflight
+        run: node --test .github/pl-ci/round106-inline-export-privacy.test.cjs
+      - name: Guard final export preview privacy state and return-to-editor flow
+        run: node --test .github/pl-ci/round107-final-preview-return-contract.test.cjs
+      - name: Guard module export measured spacing and long-text containment
+        run: node --test .github/pl-ci/round108-module-export-spacing-contract.test.cjs
+      - name: Guard personal-statistics footprint partial/full display toggle
+        run: node --test .github/pl-ci/round110-stats-footprint-toggle.test.cjs
       - name: Verify note-only Log and verified-save failure isolation
         run: node --test .github/pl-ci/round82-log-save-root-cause.test.cjs
       - name: Audit whole-site verified-save boundaries and legacy Log integrity
@@ -84,8 +180,68 @@ jobs:
         run: npm install --no-save --no-audit --no-fund --prefix .github/pl-ci playwright@1.55.0
       - name: Install Chromium and OS dependencies
         run: .github/pl-ci/node_modules/.bin/playwright install --with-deps chromium
+      - name: Prepare browser diagnostics directory
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/pl-synthetic-report"
+          printf 'Commit: %s\nWorkflow: %s\n' "$GITHUB_SHA" "$GITHUB_WORKFLOW" > "$RUNNER_TEMP/pl-synthetic-report/run-context.txt"
+      - name: Round126 real Chromium export layout and continuous PNG
+        run: node .github/pl-ci/round126-unified-export-layout-browser.cjs
+      - name: Round129 Chromium live-preview mode and recovery
+        run: node .github/pl-ci/round129-source-export-live-sync-browser.cjs
+      - name: Round130 Chromium visual comfort geometry
+        run: node .github/pl-ci/round130-visual-comfort-browser.cjs
+      - name: Round131 Chromium PL, PC and module card layout
+        run: node .github/pl-ci/round131-main-list-polish-browser.cjs
+      - name: Round132 Chromium plan and record visual comfort
+        run: node .github/pl-ci/round132-plan-record-visual-browser.cjs
+      - name: Round133 preference stats settings browser geometry
+        run: node .github/pl-ci/round133-preference-stats-settings-browser.cjs
+      - name: Round134 final export preview and gallery browser geometry
+        id: round134_browser
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          PL_SYNTHETIC_REPORT_DIR="$RUNNER_TEMP/pl-synthetic-report" node .github/pl-ci/round134-export-visual-closeout-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round134-export-visual-closeout-browser.log"
+      - name: Round135 mobile workbench and current Settings version browser geometry
+        run: node .github/pl-ci/round135-real-page-acceptance-browser.cjs
+      - name: Round136 Chromium stats exporter and mobile editor flow
+        run: node .github/pl-ci/round136-editor-export-flow-browser.cjs
+      - name: Round137 actual statistics export and final long PNG flow
+        run: node .github/pl-ci/round137-stats-preview-runtime-browser.cjs
+      - name: Round138 actual whole-page objective copy acceptance
+        run: node .github/pl-ci/round138-objective-copy-browser.cjs
+      - name: Round139 Chromium six statistics panel disclosure flow
+        run: node .github/pl-ci/round139-stats-panel-collapse-browser.cjs
+      - name: Round140 Chromium statistics identity and full list flow
+        run: node .github/pl-ci/round140-stats-panel-scope-browser.cjs
+      - name: Round143 Chromium planner agenda continuity and white surface
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: node .github/pl-ci/round143-planner-agenda-continuity-browser.cjs
+      - name: Round141 Chromium PC full archive two-column geometry
+        run: node .github/pl-ci/round141-pc-archive-two-column-browser.cjs
+      - name: Round148 Chromium multi-rule PC template geometry and preservation
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: node .github/pl-ci/round148-multirule-pc-templates-browser.cjs
+      - name: Round149 Chromium historical and current complete ZIP binary fidelity
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: node .github/pl-ci/round149-multirule-zip-browser.cjs
+      - name: Round151 native Chromium restore reload and complete ZIP re-export
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: node .github/pl-ci/round151-native-storage-roundtrip-browser.cjs
+      - name: Round124 real Chromium preference and stats export touch geometry
+        run: node .github/pl-ci/round124-preference-stats-browser.cjs
       - name: Verify production and test isolation in a real browser
-        run: node .github/pl-ci/round102-environment-isolation-browser.cjs
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/pl-synthetic-report"
+          set -o pipefail
+          node .github/pl-ci/round102-environment-isolation-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round102-environment-isolation-browser.log"
       - name: Check seven page mobile control contracts
         run: node --test .github/pl-ci/round78-interface-contract.test.cjs
       - name: Run isolated real-browser checks
@@ -106,11 +262,19 @@ jobs:
         run: node --test .github/pl-ci/round84-layout-contract.test.cjs
       - name: Audit populated synthetic cards, filter expansion and UI entry geometry
         run: node .github/pl-ci/round84-layout-flow-browser-audit.cjs
+      - name: Enforce Round134 result after subsequent browser checks
+        if: always()
+        shell: bash
+        run: |
+          if [ "${{ steps.round134_browser.outcome }}" != "success" ]; then
+            echo "Round134 failed; diagnostics are attached in pl-synthetic-browser-result."
+            exit 1
+          fi
       - name: Upload synthetic-only metadata report
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: pl-synthetic-browser-result
           path: ${{ runner.temp }}/pl-synthetic-report/
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14

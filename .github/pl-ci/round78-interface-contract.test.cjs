@@ -60,12 +60,12 @@ test('module filter spans entire phone width; sort remains reachable in mobile s
   assert.match(html,/mobileProxySelect\("moduleNativeSort","排序"\)/);
 });
 
-test('public image exports keep the one-time privacy preflight and explicit re-entry contract',()=>{
-  assert.match(html,/const PRIVACY_EXPORT_ACK_KEY=/);
+test('public image exports expose inline privacy controls without a blocking preflight',()=>{
   assert.match(html,/sensitiveImageExportButton\(btn\)/);
-  assert.match(html,/#statsExportBtn/);
-  assert.match(html,/#selfIntroExportBtn/);
-  assert.match(html,/导出前检查隐私？/);
-  assert.match(html,/privacyExportBypassOnce/);
-  assert.match(html,/btn\.click\(\)/);
+  assert.match(html,/SENSITIVE_EXPORT_FINAL_SELECTOR/);
+  assert.match(html,/data-export-inline-privacy-toggle/);
+  assert.match(html,/隐私导出/);
+  assert.doesNotMatch(html,/const PRIVACY_EXPORT_ACK_KEY=/);
+  assert.doesNotMatch(html,/privacyExportBypassOnce/);
+  assert.doesNotMatch(html,/appSelect\("当前展示图片可能包含人物姓名/);
 });

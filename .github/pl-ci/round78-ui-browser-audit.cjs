@@ -19,17 +19,20 @@ const server=http.createServer((req,res)=>{
 const viewButtons={profiles:'profilesViewBtn',pcs:'pcsViewBtn',modules:'modulesViewBtn',plans:'plansViewBtn',records:'recordsViewBtn',selfIntro:'selfIntroViewBtn',stats:'statsViewBtn'};
 const results=[];let browser;
 
-async function completeSensitiveExportPreflight(page){
-  await page.waitForFunction(()=>document.getElementById('selfIntroExportPanel')?.hidden===false||document.getElementById('actionDialogBackdrop')?.hidden===false,null,{timeout:8000});
+async function verifyInlineExportPrivacy(page){
+  await page.waitForFunction(()=>document.getElementById('selfIntroExportPanel')?.hidden===false,null,{timeout:8000});
   const dialog=page.locator('#actionDialogBackdrop');
-  if(!await dialog.isVisible()) return {shown:false,completed:false};
-  const title=(await page.locator('#actionDialogTitle').textContent()||'').trim();
-  if(title!=='导出前检查隐私？') throw new Error('unexpected export preflight dialog: '+title);
-  const select=page.locator('#actionDialogSelect');
-  if(await select.isVisible()) await select.selectOption('privacy');
-  await page.locator('#actionDialogConfirm').click({timeout:5000});
-  await page.waitForFunction(()=>document.getElementById('actionDialogBackdrop')?.hidden===true,null,{timeout:5000});
-  return {shown:true,completed:true,title};
+  if(await dialog.isVisible()) throw new Error('privacy-preflight-unexpectedly-blocking');
+  const toggle=page.locator('#selfIntroExportPanel [data-export-inline-privacy-toggle]');
+  const switchLabel=page.locator('#selfIntroExportPanel .export-inline-privacy-switch');
+  if(!await toggle.isVisible()||!await switchLabel.isVisible()) throw new Error('privacy-inline-control-missing');
+  const before=await toggle.isChecked();
+  await switchLabel.click({timeout:5000});
+  const after=await toggle.isChecked();
+  if(before===after) throw new Error('privacy-inline-control-did-not-toggle');
+  await switchLabel.click({timeout:5000});
+  if(await toggle.isChecked()!==before) throw new Error('privacy-inline-control-did-not-restore');
+  return {shown:true,toggled:true};
 }
 async function inspect(page,view,width){
   const data=await page.evaluate(view=>{
@@ -125,7 +128,7 @@ async function inspect(page,view,width){
         if(view==='selfIntro'){
           await page.locator('#selfIntroExportBtn').click({timeout:8000});
           try{
-            record.privacyPreflight=await completeSensitiveExportPreflight(page);
+            record.privacyPreflight=await verifyInlineExportPrivacy(page);
             await page.waitForFunction(()=>document.getElementById('selfIntroExportPanel')?.hidden===false,null,{timeout:8000});
             const panel=await page.evaluate(()=>{const r=document.getElementById('selfIntroExportPanel').getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,viewport:innerWidth,height:innerHeight};});
             record.exportPanel=panel;
@@ -135,7 +138,7 @@ async function inspect(page,view,width){
             record.failed.push('preference-export-flow-will-not-complete');
           }
           if(await page.locator('#actionDialogBackdrop').isVisible()){
-            record.failed.push('privacy-preflight-left-blocking-page');
+            record.failed.push('privacy-inline-control-left-blocking-page');
             await page.locator('#actionDialogCancel').click({timeout:5000}).catch(()=>{});
           }
           if(await page.locator('#selfIntroExportPanel').isVisible()) await page.locator('#selfIntroExportPanelClose').click({timeout:5000});

@@ -33,10 +33,12 @@ test('full annual calendars expand all same-day module names and force statistic
 });
 
 test('archived public calendar/footprint entries carry no redundant 已 marker while planned entries remain distinguishable',()=>{
-  const fn=extractFunction('plannerCalendarStatusCode');
-  const ctx={};vm.createContext(ctx);vm.runInContext(fn,ctx);
-  assert.equal(ctx.plannerCalendarStatusCode({archived:true}),'');
-  assert.equal(ctx.plannerCalendarStatusCode({archived:false}),'计');
+  const overview=extractFunction('drawPlannerYearCalendarBlock');
+  const complete=extractFunction('drawPlannerCompleteCalendarPage');
+  assert.doesNotMatch(overview,/已归档|fillText\([`"']计/);
+  assert.doesNotMatch(complete,/已归档|计划 \+|`计划 /);
+  assert.match(overview,/setLineDash\(\[3,2\]\)/);
+  assert.match(complete,/setLineDash\(\[4,2\]\)/);
   const agenda=extractFunction('drawPlannerYearAgendaBlock');
   assert.match(agenda,/event\.archived\?"":"计划"/);
   assert.doesNotMatch(agenda,/event\.archived\?"已归档"/);

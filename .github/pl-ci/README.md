@@ -63,3 +63,26 @@ The CI suite is a long-lived release guard, not a snapshot of one historical ver
 - `round102-environment-isolation.test.cjs` guards pathname-scoped localStorage / IndexedDB / Cache Storage / BroadcastChannel separation between `/PL-Life/` and `/PL-Life-Test/`.
 - `round102-environment-isolation-browser.cjs` performs the same-origin dual-site check in Chromium after Playwright installation; the test site may copy legacy data, but test writes and cache cleanup must leave production bytes untouched.
 
+
+## Production recap and PC archive layout maintenance
+
+- `round103-records-recap-preview-layout.test.cjs` keeps integrated record recap readable on production: the desktop composer reserves enough width for the 1080px canvas, only one export page is previewed at a time, focus-preview mode can hide controls, and the historical high-density default migrates to standard.
+- `round104-pc-archive-layout-contract.test.cjs` protects the complete PC image dossier geometry. The nine background fields remain one semantic “背景故事” section, long text is measured from real Canvas wrapping instead of fixed line caps, field/value grids compute their actual body height, and each archive block isolates Canvas alignment/font state before the next block is drawn.
+- Complete-dossier presentation fixes are display-only. They must not mutate PC archive fields, schema version, backup formats, production/test environment namespaces or attachment databases.
+
+## Final export preview return-flow maintenance
+
+- `round106-inline-export-privacy.test.cjs` keeps public image composers non-blocking: privacy is controlled inside the export editor and changing it redraws the open preview without writing formal archive data.
+- `round107-final-preview-return-contract.test.cjs` protects the final confirmation layer: it must state the current privacy snapshot, keep X/backdrop as plain dismiss actions, and expose `返回调整` only when the source export editor supplies a safe return callback.
+- Planner year, detailed availability, preference, statistics, PL/KP organizer, single-table recap, integrated recap, PC dossier and module dossier must return to the same editing context rather than forcing users to navigate back from scratch.
+- On narrow screens a one-page final preview uses two action columns; multi-page output keeps the ZIP + PNG + return/close three-action layout. Privacy-state/feedback/footer rows must remain explicit so mobile browsers do not create accidental implicit-grid placement.
+
+
+## Module dossier spacing maintenance
+
+- `round108-module-export-spacing-contract.test.cjs` protects the module integrated dossier against the text/border collision shown by long recruitment notes: panel height must be derived from real Canvas wrapping, not rough character-count estimates.
+- Module profile text, recruitment fields, ratings and table-history blocks reserve explicit top/bottom padding and an inter-block gap; the standalone recruitment page also sizes its canvas from measured content.
+- Keep the PC complete-archive measured spacing model intact when changing shared entity-export helpers. Presentation spacing fixes remain read-only and must not mutate module/PC archives or backup schemas.
+- `round111-records-recap-gutter-contract.test.cjs` keeps the integrated recap header, body and footer on one horizontal gutter baseline, with deliberate mobile gutter reduction instead of edge-to-edge content.
+
+- Round112: 单桌回顾高度计算运行级回归，禁止 `return218` / `return92` / `return180` 等数字返回值粘连为未定义变量，并执行 summary / schedule / cast / logs / reflection / fallback 全分支。

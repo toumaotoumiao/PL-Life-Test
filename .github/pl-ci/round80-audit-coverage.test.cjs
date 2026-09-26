@@ -20,11 +20,14 @@ test('failed navigation must preserve diagnostics and a screenshot',()=>{
  assert.match(file,/ui-failure-/);
 });
 
-test('sensitive image export audit must complete the real privacy preflight instead of leaving a blocking modal',()=>{
- assert.match(file,/completeSensitiveExportPreflight/);
- assert.match(file,/actionDialogTitle/);
- assert.match(file,/导出前检查隐私？/);
- assert.match(file,/selectOption\('privacy'\)/);
- assert.match(file,/privacy-preflight-left-blocking-page/);
- assert.doesNotMatch(file,/preference-export-panel-will-not-open/);
+test('sensitive image export audit must open the composer directly and verify inline privacy control through the visible switch',()=>{
+ assert.match(file,/verifyInlineExportPrivacy/);
+ assert.match(file,/data-export-inline-privacy-toggle/);
+ assert.match(file,/export-inline-privacy-switch/);
+ assert.match(file,/switchLabel\.click/);
+ assert.match(file,/privacy-inline-control-missing/);
+ assert.match(file,/privacy-inline-control-did-not-restore/);
+ assert.match(file,/privacy-preflight-unexpectedly-blocking/);
+ assert.doesNotMatch(file,/toggle\.click\(\{timeout:5000\}\)/);
+ assert.doesNotMatch(file,/completeSensitiveExportPreflight/);
 });

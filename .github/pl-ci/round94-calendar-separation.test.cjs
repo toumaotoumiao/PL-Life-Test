@@ -31,7 +31,7 @@ test('personal statistics calendar exposes every module label instead of dot-onl
 });
 
 test('calendar display grouping keeps table identity and can report multiple runs on one day',()=>{
-  const src=[extractFunction('statsCalendarRoleCode'),extractFunction('statsCalendarShortName'),extractFunction('statsCalendarDisplayItems')].join('\n');
+  const src=[extractFunction('statsCalendarRoleKey'),extractFunction('statsCalendarMergeRole'),extractFunction('statsCalendarShortName'),extractFunction('statsCalendarDisplayItems')].join('\n');
   const context={Map,Set,String,Boolean,Math}; vm.createContext(context); vm.runInContext(src,context);
   const rows=[
     {runId:'a',moduleName:'克拉布湖水怪',roles:{kp:true,pl:false},archived:true},
@@ -42,8 +42,8 @@ test('calendar display grouping keeps table identity and can report multiple run
   const out=context.statsCalendarDisplayItems(rows,2);
   assert.equal(out.all.length,3);
   assert.equal(out.items[0].count,2);
-  assert.equal(out.items[0].role,'K');
-  assert.equal(out.items[1].role,'P');
+  assert.equal(out.items[0].roleKey,'kp');
+  assert.equal(out.items[1].roleKey,'pl');
   assert.equal(out.extra,1);
 });
 
