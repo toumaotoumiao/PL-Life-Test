@@ -33,7 +33,7 @@ test('execute module-card renderer: four extra tags are visible without opening 
   const escapeHTML=value=>String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const ctx={moduleBatchSelectedIds:new Set(),moduleBatchMode:false,
     moduleSideStats:()=>({kp:2,pl:3}),moduleRunCount:()=>5,
-    moduleComputedScore:()=>null,moduleLastRunDate:()=>'',modulesByNormalizedName:()=>[{}],
+    moduleComputedScore:()=>null,moduleLastRunDate:()=>'',sameRuleNamedModules:()=>[{}],
     escapeHTML,compactRecordDate:value=>value,moduleRuleDisplay:()=>"CoC · 第七版"};
   vm.runInNewContext(snippet+'\nthis.render=nativeModuleCardHTML;',ctx);
   const record={id:'demo',ruleMeta:{familyId:'brp',systemId:'coc',editionId:'7e'},name:'测试模组',author:'测试作者',location:'日本',era:'现代',players:'1人',hoSystem:'has',duration:'4-6小时',nature:'文字团',reKp:'是',notes:''};

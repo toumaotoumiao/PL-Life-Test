@@ -66,6 +66,12 @@ jobs:
         run: node --test .github/pl-ci/round100-public-image-export-convergence.test.cjs
       - name: Guard full calendar readability and retire low-value public stats
         run: node --test .github/pl-ci/round101-calendar-readability-cleanup.test.cjs
+      - name: Round152 multi-rule module identity and export/restore compatibility
+        run: node --test .github/pl-ci/round152-multirule-relation-export.test.cjs
+      - name: Round153 same-title different-rule cross-view stable-ID safeguards
+        run: node --test .github/pl-ci/round153-multirule-crossview-id.test.cjs
+      - name: Round154 stable-ID destructive operations and stale-link safety
+        run: node --test .github/pl-ci/round154-multirule-destructive-id.test.cjs
       - name: Guard production and test environment storage isolation
         run: node --test .github/pl-ci/round102-environment-isolation.test.cjs
       - name: Guard integrated recap readable continuous-preview layout
@@ -236,6 +242,24 @@ jobs:
         run: |
           set -o pipefail
           node .github/pl-ci/round148-multirule-pc-templates-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round148-multirule-pc-templates-browser.log"
+      - name: Round153 Chromium same-title rule card usability
+        id: round153_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          node .github/pl-ci/round153-multirule-crossview-id-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round153-multirule-crossview-id-browser.log"
+      - name: Round154 Chromium same-title rule group labels and responsive layout
+        id: round154_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          node .github/pl-ci/round154-multirule-group-label-browser.cjs 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round154-multirule-group-label-browser.log"
       - name: Round149 Chromium historical and current complete ZIP binary fidelity
         id: round149_browser
         continue-on-error: true
@@ -291,6 +315,8 @@ jobs:
             "Round134:${{ steps.round134_browser.outcome }}" \
             "Round141:${{ steps.round141_browser.outcome }}" \
             "Round148:${{ steps.round148_browser.outcome }}" \
+            "Round153:${{ steps.round153_browser.outcome }}" \
+            "Round154:${{ steps.round154_browser.outcome }}" \
             "Round149:${{ steps.round149_browser.outcome }}" \
             "Round151:${{ steps.round151_browser.outcome }}"; do
             if [ "${check#*:}" != "success" ]; then
