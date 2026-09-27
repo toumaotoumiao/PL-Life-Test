@@ -42,7 +42,7 @@ test('generic PC data saves independently and old CoC7 data stays intact in norm
  assert.match(html,/if\(!pcRuleIsCoc\(pc\)\)return pcGenericArchiveBlocks/);
  assert.match(html,/if\(!pcRuleIsCoc\(pc\)\)return pcFullArchiveImageCanvases/);
  assert.match(html,/if\(!pcRuleIsCoc\(pcDraft\)\)\{appNotice\('PC 档案 → Excel 导入/);
- assert.match(html,/if\(pc&&!pcRuleIsCoc\(pc\)\)\{appNotice\('PC 档案 → Excel 导出/);
+ assert.match(html,/route\.status!=='ready'\|\|route\.adapterId!=='coc7'/); // CoC7 export is guarded by the current confirmed rule/edition route
  assert.match(html,/if\(!pcRuleIsCoc\(pc\)\)return html;let rows=/);
  assert.match(html,/pcRuleIsCoc\(pc\)\?pcArchiveSection\("CoC7 核心数值"/);
  assert.match(html,/if\(!pcRuleIsCoc\(pc\)\)\{/);

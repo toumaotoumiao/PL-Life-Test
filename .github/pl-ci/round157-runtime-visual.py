@@ -155,7 +155,9 @@ with sync_playwright() as p:
             add_problem(width,'setup',traceback.format_exc()[-1300:],str(ex))
             try:page.screenshot(path=str(SAVE/f'FAIL-{width}.png'),full_page=False)
             except Exception:pass
-        finally:page.close()
+        finally:
+            page.close()
+            print(f'Round157 {width}px completed: {checks} checks; {len(failures)} failures',flush=True)
     browser.close()
 report={'version':re.search(r'const APP_UI_VERSION = "([\d.]+)";',html).group(1),
   'kind':'real app scripts and renderer, isolated in-memory synthetic data; NOT real user data or native IndexedDB',

@@ -78,6 +78,18 @@ jobs:
         run: node --test .github/pl-ci/round156-visual-contract.test.cjs
       - name: Round157 actual-runtime visual regression contract
         run: node --test .github/pl-ci/round157-runtime-visual.test.cjs
+      - name: Round158 toolbar and rule chooser layout contract
+        run: node --test .github/pl-ci/round158-toolbar-rule-runtime.test.cjs
+      - name: Round159 statistics export sorting and multipage drag contract
+        run: node --test .github/pl-ci/round159-stats-export-interaction.test.cjs
+      - name: Round160 PC Excel rule/edition template routing
+        run: node --test .github/pl-ci/round160-pc-excel-rule-router.test.cjs
+      - name: Round161 statistics native-pixel inspection and final image contract
+        run: node --test .github/pl-ci/round161-stats-preview-inspection.test.cjs
+      - name: Round162 modal history cleanup and browser Back regression
+        run: node --test .github/pl-ci/round162-modal-history-race.test.cjs
+      - name: Round164 unified final image inspection contract
+        run: node --test .github/pl-ci/round164-unified-final-inspection.test.cjs
       - name: Guard production and test environment storage isolation
         run: node --test .github/pl-ci/round102-environment-isolation.test.cjs
       - name: Guard integrated recap readable continuous-preview layout
@@ -220,6 +232,71 @@ jobs:
         run: |
           set -o pipefail
           python .github/pl-ci/round157-runtime-visual.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round157-runtime-visual.log"
+      - name: Round158 actual-toolbar and rule picker visual acceptance
+        id: round158_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round158-toolbar-rule-runtime.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round158-toolbar-rule-runtime.log"
+      - name: Round159 statistics composer interactive paged/long preview
+        id: round159_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round159-stats-export-interaction-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round159-stats-composer-browser.log"
+      - name: Round160 PC Excel rule-aware real-browser acceptance
+        id: round160_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round160-pc-excel-rule-router-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round160-pc-excel-browser.log"
+      - name: Round161 statistics source and final image geometry acceptance
+        id: round161_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round161-stats-preview-inspection-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round161-stats-preview-inspection.log"
+      - name: Round162 delayed modal cleanup and real browser Back
+        id: round162_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round162-modal-history-race-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round162-modal-history.log"
+      - name: Round164 unified final preview at native pixel size
+        id: round164_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round164-unified-final-inspection-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round164-final-inspection.log"
+      - name: Round165 specialized PC rule row order and preservation contract
+        run: node --test .github/pl-ci/round165-rule-row-order.test.cjs
+      - name: Round165 specialized PC rule row order in actual synthetic UI
+        id: round165_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round165-rule-row-order-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round165-rule-rows.log"
       - name: Round126 real Chromium export layout and continuous PNG
         run: node .github/pl-ci/round126-unified-export-layout-browser.cjs
       - name: Round129 Chromium live-preview mode and recovery
@@ -359,7 +436,14 @@ jobs:
             "Round149:${{ steps.round149_browser.outcome }}" \
             "Round151:${{ steps.round151_browser.outcome }}" \
             "Round156:${{ steps.round156_browser.outcome }}" \
-            "Round157:${{ steps.round157_browser.outcome }}"; do
+            "Round157:${{ steps.round157_browser.outcome }}" \
+            "Round158:${{ steps.round158_browser.outcome }}" \
+            "Round159:${{ steps.round159_browser.outcome }}" \
+            "Round160:${{ steps.round160_browser.outcome }}" \
+            "Round161:${{ steps.round161_browser.outcome }}" \
+            "Round162:${{ steps.round162_browser.outcome }}" \
+            "Round164:${{ steps.round164_browser.outcome }}" \
+            "Round165:${{ steps.round165_browser.outcome }}"; do
             if [ "${check#*:}" != "success" ]; then
               echo "${check%%:*} failed; see its log in pl-synthetic-browser-result."
               failed=1
