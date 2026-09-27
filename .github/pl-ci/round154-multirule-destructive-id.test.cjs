@@ -76,7 +76,7 @@ test('the page labels same-title groups with actual rule and event passes group 
  assert.match(html,/deleteModuleRecords\(delModule\.dataset\.deleteModule,delModule\.dataset\.deleteModuleGroupKey\|\|""\)/);
 });
 test('publish version and SW cache agree, earlier CI test does not hardcode previous release',()=>{
- const version=html.match(/const APP_UI_VERSION = "([\d.]+)";/)?.[1];assert.equal(version,'8.1.12.221');
+ const version=html.match(/const APP_UI_VERSION = "([\d.]+)";/)?.[1];assert.match(version,/^8\.1\.12\.\d+$/);
  assert.equal(fs.readFileSync(path.join(root,'sw.js'),'utf8').match(/CACHE_PREFIX\}v([\d.]+)`/)?.[1],version);
  assert.doesNotMatch(fs.readFileSync(path.join(root,'.github/pl-ci/round153-multirule-crossview-id.test.cjs'),'utf8'),/assert\.equal\(version,'8\.1\.12\.220'\)/);
  assert.equal(html.split(`<strong class="version-log-version">v${version}</strong>`).length-1,1);
