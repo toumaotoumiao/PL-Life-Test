@@ -174,6 +174,8 @@ jobs:
         run: node --test .github/pl-ci/round150-multirule-restore-evidence.test.cjs
       - name: Round150 transaction commit rollback and crash-journal runtime
         run: node --test .github/pl-ci/round150-transaction-runtime.test.cjs
+      - name: Round166 full-app recovery reload and second ZIP acceptance contract
+        run: node --test .github/pl-ci/round166-fullapp-reload-roundtrip.test.cjs
       - name: Round151 native IndexedDB restoration test source contract
         run: node --test .github/pl-ci/round151-native-storage-roundtrip.test.cjs
       - name: Guard PC complete-archive continuous background and stable layout geometry
