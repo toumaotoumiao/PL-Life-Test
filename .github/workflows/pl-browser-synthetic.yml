@@ -74,6 +74,10 @@ jobs:
         run: node --test .github/pl-ci/round154-multirule-destructive-id.test.cjs
       - name: Round155 exact statistics-to-record stable group navigation
         run: node --test .github/pl-ci/round155-stats-module-id-navigation.test.cjs
+      - name: Round156 visual acceptance release contract
+        run: node --test .github/pl-ci/round156-visual-contract.test.cjs
+      - name: Round157 actual-runtime visual regression contract
+        run: node --test .github/pl-ci/round157-runtime-visual.test.cjs
       - name: Guard production and test environment storage isolation
         run: node --test .github/pl-ci/round102-environment-isolation.test.cjs
       - name: Guard integrated recap readable continuous-preview layout
@@ -193,6 +197,29 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/pl-synthetic-report"
           printf 'Commit: %s\nWorkflow: %s\n' "$GITHUB_SHA" "$GITHUB_WORKFLOW" > "$RUNNER_TEMP/pl-synthetic-report/run-context.txt"
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - name: Install pinned visual-check runner
+        run: python -m pip install --disable-pip-version-check playwright==1.55.0
+      - name: Round156 full-page visual structural acceptance
+        id: round156_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round156-visual-acceptance.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round156-visual-acceptance.log"
+      - name: Round157 real application renderer visual acceptance
+        id: round157_browser
+        continue-on-error: true
+        shell: bash
+        env:
+          PL_SYNTHETIC_REPORT_DIR: ${{ runner.temp }}/pl-synthetic-report
+        run: |
+          set -o pipefail
+          python .github/pl-ci/round157-runtime-visual.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round157-runtime-visual.log"
       - name: Round126 real Chromium export layout and continuous PNG
         run: node .github/pl-ci/round126-unified-export-layout-browser.cjs
       - name: Round129 Chromium live-preview mode and recovery
@@ -330,7 +357,9 @@ jobs:
             "Round154:${{ steps.round154_browser.outcome }}" \
             "Round155:${{ steps.round155_browser.outcome }}" \
             "Round149:${{ steps.round149_browser.outcome }}" \
-            "Round151:${{ steps.round151_browser.outcome }}"; do
+            "Round151:${{ steps.round151_browser.outcome }}" \
+            "Round156:${{ steps.round156_browser.outcome }}" \
+            "Round157:${{ steps.round157_browser.outcome }}"; do
             if [ "${check#*:}" != "success" ]; then
               echo "${check%%:*} failed; see its log in pl-synthetic-browser-result."
               failed=1
