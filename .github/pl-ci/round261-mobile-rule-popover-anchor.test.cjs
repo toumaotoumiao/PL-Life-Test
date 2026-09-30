@@ -16,8 +16,10 @@ test('Round261 module, plan and record rule panels share the same mobile anchor 
 });
 
 test('Round261 runtime positions every open rule panel from trigger bottom, not a page-global constant',()=>{
-  const start=source.indexOf('/* ===== Stage87 · 手机规则选择面板锚定 ===== */');
-  assert.ok(start>0,'Stage87 mobile rule anchor helper missing');
+  const stage88=source.indexOf('/* ===== Stage88 · 手机规则选择面板锚定与可关闭保障 ===== */');
+  const stage87=source.indexOf('/* ===== Stage87 · 手机规则选择面板锚定 ===== */');
+  const start=stage88>0?stage88:stage87;
+  assert.ok(start>0,'mobile rule anchor helper missing');
   const end=source.indexOf('/* ===== 主应用运行增强 · PC 档案长期管理与 Excel 导入 ===== */',start);
   assert.ok(end>start,'Stage87 helper boundary missing');
   const block=source.slice(start,end);
