@@ -21,6 +21,7 @@ const els={pcEditorBody:document.getElementById('editor')};let pcDraft;
 function renderPcEditor(){els.pcEditorBody.innerHTML=pcGenericRuleEditorHTML(pcDraft);}
 function updatePcEditorSaveState(){}
 function syncPcExcelExportUi(){}
+let pcDndDraftImportReview=null;
 els.pcEditorBody.addEventListener('input',e=>{const field=e.target.dataset.pcGenericField;if(!field)return;const row=e.target.closest('[data-pc-generic-row]'),key=row?.dataset.pcGenericRow,i=Number(row?.dataset.pcGenericIndex);pcRuleEditableData(pcDraft)[key][i][field]=e.target.value;});
 '''
 checks=[]

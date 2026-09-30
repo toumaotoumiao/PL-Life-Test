@@ -26,6 +26,7 @@ function renderPcEditor(){
 }
 function updatePcEditorSaveState(){}
 function syncPcExcelExportUi(){}
+let pcDndDraftImportReview=null;
 '''
 checks=[]
 def check(name,yes):
