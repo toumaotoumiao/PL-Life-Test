@@ -551,6 +551,8 @@ jobs:
         run: node --test .github/pl-ci/round259-native-workflow-continuation.test.cjs
       - name: Round260 startup settings decoupling contract
         run: node --test .github/pl-ci/round260-startup-settings-decoupling.test.cjs
+      - name: Round261 mobile rule popover anchor contract
+        run: node --test .github/pl-ci/round261-mobile-rule-popover-anchor.test.cjs
       - name: Round251 native release evidence attestation fixtures
         run: python .github/pl-ci/round251-native-result-attestation-test.py
       - name: Round223 private offline D&D difference audit synthetic contract
