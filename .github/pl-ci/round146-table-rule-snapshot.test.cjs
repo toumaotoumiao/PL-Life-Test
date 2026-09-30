@@ -10,7 +10,7 @@ function sandbox(){const context={
   normalizeLogRows:()=>[],normalizeParticipantAssignments:()=>[],normalizeKpc:()=>({}),normalizePlanSlots:()=>[],normalizeTableStatus:()=>'',hasPostRunDraft:()=>false,normalizePostRunDraft:()=>({}),
   uid:()=> 'id-1',clone:x=>JSON.parse(JSON.stringify(x)),mutateRunPlan:()=>true,mutateRunRecord:()=>true,
   planInputPending:null,recordInputPending:null,runPlans:[],runRecords:[],
-  };vm.createContext(context);vm.runInContext(extract('normalizeRunRuleSnapshot','function normalizeRunPlan('),context);return context;}
+  };vm.createContext(context);vm.runInContext(extract('pcPreserveUnknownJsonProps','function normalizePcArchive('),context);vm.runInContext(extract('normalizeRunRuleSnapshot','function normalizeRunPlan('),context);return context;}
 function json(value){return JSON.parse(JSON.stringify(value));}
 test('new table inherits selected taxonomy; old run without saved rule remains unrecorded',()=>{
   const x=sandbox(),m={id:'m1',ruleMeta:{familyId:'saikoro-fiction',systemId:'insane',editionId:'',source:'user-selected'}};
@@ -30,7 +30,7 @@ test('canonical format stores a nullable historical snapshot, then hydrates it f
   assert.equal(c.ruleMeta.systemId,'insane');assert.equal(c.moduleId,'m1');
   assert.equal(json(x.canonicalRunFromRuntime({...recorded,ruleMeta:null},'completed','m1')).ruleMeta,null);
   assert.match(html,/ruleMeta: normalizeRunRuleSnapshot\(run\?\.ruleMeta\)/);
-  assert.match(html,/ruleMeta:clone\(m\.ruleMeta\),recruitment:/);
+  assert.match(html,/ruleMeta: clone\(m\.ruleMeta\)/);assert.match(html,/modules: modules\.map\(canonicalModuleFromRuntime\)/);
   assert.match(html,/ruleMeta:clone\(plan\.ruleMeta\)/);
   assert.match(html,/ruleMeta:clone\(rec\.ruleMeta\)/);
 });
@@ -38,16 +38,18 @@ test('canonical recovery projection preserves module taxonomy and actual per-tab
  const x=sandbox();vm.runInContext(extract('canonicalRunFromRuntime','function buildCanonicalCollections('),x);
  Object.assign(x,{PLDataMigrationGuard:{requireReadable:()=>{}},isCanonicalArchive:()=>true,assertCanonicalIntegrity:()=>{},normalizeSettings:r=>r,runtimeProfileFromCanonical:p=>p,
   normalizePcArchive:r=>r,normalizeCanonicalModule:r=>r,normalizeRunPlan:r=>r,normalizeRunRecord:r=>r,canonicalProfileFromRuntime:p=>p,normalizeRichModule:m=>m,
-  BACKUP_FORMAT:'fixture',PLDataHeritage:{capture:(raw,projection)=>{x.projection=projection;return {};}}});
+  BACKUP_FORMAT:'fixture',settings:{moduleArchive:{}},pcPreserveUnknownJsonProps:(raw,canonical,excluded)=>Object.assign(canonical,Object.fromEntries(Object.entries(raw||{}).filter(([key])=>!Object.prototype.hasOwnProperty.call(canonical,key)&&!excluded?.has(key)&&!['__proto__','constructor','prototype'].includes(key)).map(([key,v])=>[key,JSON.parse(JSON.stringify(v))]))),PLDataHeritage:{capture:(raw,projection)=>{x.projection=projection;return {};}}});
+ vm.runInContext(extract('canonicalModuleFromRuntime','function canonicalRunFromRuntime('),x);
  vm.runInContext(extract('hydrateCanonicalArchive','function isSelfProfile('),x);
  const rule={familyId:'saikoro-fiction',systemId:'insane',editionId:'',source:'user-selected'};
- const mod={id:'m1',name:'测试模组',ruleMeta:{...rule},recruitment:{rules:'旧原文'},rating:{},legacySideOffset:{}};
+ const mod={id:'m1',name:'测试模组',ruleMeta:{...rule,futureRule:{key:'kept'}},recruitment:{rules:'旧原文',futureRecruitment:{keep:true}},rating:{},legacySideOffset:{},futureModule:{keep:true}};
  const a=json(x.canonicalRunFromRuntime({id:'p1',moduleId:'m1',moduleName:'测试模组',ruleMeta:rule,plIds:[]},'planned','m1'));
  const b=json(x.canonicalRunFromRuntime({id:'r1',moduleId:'m1',moduleName:'测试模组',ruleMeta:null,plIds:[]},'completed','m1'));
  const hydrated=x.hydrateCanonicalArchive({schemaVersion:26,app:{},settings:{},data:{profiles:[],pcs:[],modules:[mod],runs:[a,b]}});
  assert.equal(hydrated.runPlans[0].ruleMeta.systemId,'insane');assert.equal(hydrated.runRecords[0].ruleMeta,null);
  assert.equal(hydrated.modules[0].ruleMeta.systemId,'insane');assert.equal(x.projection.data.modules[0].ruleMeta.systemId,'insane');
  assert.equal(x.projection.data.runs[0].ruleMeta.systemId,'insane');assert.equal(x.projection.data.runs[1].ruleMeta,null);
+ assert.deepEqual(json(x.projection.data.modules[0].futureModule),mod.futureModule);assert.deepEqual(json(x.projection.data.modules[0].recruitment.futureRecruitment),mod.recruitment.futureRecruitment);
 });
 test('all table creation and conversion routes explicitly preserve or inherit rule',()=>{
   assert.match(html,/makeBlankRunPlan\(\)[\s\S]*?ruleMeta: newRunRuleFromModule\(null\)/);

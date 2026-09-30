@@ -1,0 +1,1 @@
+Stage76 · v8.1.12.255 / schema26。完整报告见 STAGE76_REPORT.md。代码回归 865/865；D&D 双版手动字段 UI 16/16；真实原始 XLSX、原生 ZIP 恢复、真机及线上发布均未取得 PASS。新建 D&D 两版七项手填字段不由 Excel 自动输入，不覆盖既有 ruleSheets。正式站勿覆盖。下一轮以 Stage76 完整候选工程为唯一基线。
