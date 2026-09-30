@@ -15,9 +15,9 @@ test('Round184 canonical serialize retains future module and recruitment attribu
  for(const key of ['rules','recommendedSkills','cardRequirements','recommendedOccupations','lostRate','background','recruitmentNotes'])assert.match(slice,new RegExp("'"+key+"'"));
 });
 test('Round184 rehydration evidence projects every module with canonical serializer',()=>{
- assert.match(html,/modules: modules\.map\(canonicalModuleFromRuntime\)/);
+ assert.match(html,/modules: modules\.map\(m => canonicalModuleFromRuntime\(m, st\.moduleArchive\)\)/);
  assert.match(html,/const modules = raw\.data\.modules\.map\(m => normalizeCanonicalModule\(m, st\.moduleArchive\)\)/);
- assert.match(html,/modules\.filter\(m => m\.name\)\.map\(canonicalModuleFromRuntime\)/);
+ assert.match(html,/modules\.filter\(m => m\.name\)\.map\(m => canonicalModuleFromRuntime\(m, settings\.moduleArchive\)\)/);
 });
 test('Round184 prototype-safe cloning and prior PC normalization retained',()=>{
  assert.match(html,/key==='__proto__'\|\|key==='constructor'\|\|key==='prototype'/);

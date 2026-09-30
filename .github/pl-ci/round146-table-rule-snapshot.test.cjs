@@ -31,7 +31,7 @@ test('canonical format stores a nullable historical snapshot, then hydrates it f
   assert.equal(c.ruleMeta.systemId,'insane');assert.equal(c.moduleId,'m1');
   assert.equal(json(x.canonicalRunFromRuntime({...recorded,ruleMeta:null},'completed','m1')).ruleMeta,null);
   assert.match(html,/ruleMeta: normalizeRunRuleSnapshot\(run\?\.ruleMeta\)/);
-  assert.match(html,/ruleMeta: clone\(m\.ruleMeta\)/);assert.match(html,/modules: modules\.map\(canonicalModuleFromRuntime\)/);
+  assert.match(html,/ruleMeta: clone\(m\.ruleMeta\)/);assert.match(html,/modules: modules\.map\(m => canonicalModuleFromRuntime\(m, st\.moduleArchive\)\)/);
   assert.match(html,/ruleMeta:clone\(plan\.ruleMeta\)/);
   assert.match(html,/ruleMeta:clone\(rec\.ruleMeta\)/);
 });
@@ -39,7 +39,7 @@ test('canonical recovery projection preserves module taxonomy and actual per-tab
  const x=sandbox();vm.runInContext(extract('canonicalRunFromRuntime','function buildCanonicalCollections('),x);
  Object.assign(x,{PLDataMigrationGuard:{requireReadable:()=>{}},isCanonicalArchive:()=>true,assertCanonicalIntegrity:()=>{},normalizeSettings:r=>r,runtimeProfileFromCanonical:p=>p,
   normalizePcArchive:r=>r,normalizeCanonicalModule:r=>r,normalizeRunPlan:r=>r,normalizeRunRecord:r=>r,canonicalProfileFromRuntime:p=>p,normalizeRichModule:m=>m,
-  BACKUP_FORMAT:'fixture',settings:{moduleArchive:{}},pcPreserveUnknownJsonProps:(raw,canonical,excluded)=>Object.assign(canonical,Object.fromEntries(Object.entries(raw||{}).filter(([key])=>!Object.prototype.hasOwnProperty.call(canonical,key)&&!excluded?.has(key)&&!['__proto__','constructor','prototype'].includes(key)).map(([key,v])=>[key,JSON.parse(JSON.stringify(v))]))),PLDataHeritage:{capture:(raw,projection)=>{x.projection=projection;return {};}}});
+  BACKUP_FORMAT:'fixture',pcPreserveUnknownJsonProps:(raw,canonical,excluded)=>Object.assign(canonical,Object.fromEntries(Object.entries(raw||{}).filter(([key])=>!Object.prototype.hasOwnProperty.call(canonical,key)&&!excluded?.has(key)&&!['__proto__','constructor','prototype'].includes(key)).map(([key,v])=>[key,JSON.parse(JSON.stringify(v))]))),PLDataHeritage:{capture:(raw,projection)=>{x.projection=projection;return {};}}});
  vm.runInContext(extract('canonicalModuleFromRuntime','function canonicalRunFromRuntime('),x);
  vm.runInContext(extract('hydrateCanonicalArchive','function isSelfProfile('),x);
  const rule={familyId:'saikoro-fiction',systemId:'insane',editionId:'',source:'user-selected'};
