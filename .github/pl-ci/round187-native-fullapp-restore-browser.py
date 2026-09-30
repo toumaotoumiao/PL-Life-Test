@@ -200,6 +200,37 @@ try:
             page.reload(wait_until='domcontentloaded',timeout=90000)
             page.wait_for_function("typeof buildUnifiedCompleteBackupBlob === 'function' && Array.isArray(profiles)",timeout=30000)
             check('reload-fresh-js',not page_errors)
+            # Synthetic-only startup diagnostic. Round187 always uses an ephemeral
+            # isolated origin seeded by this script, so this reports no user data.
+            # Keep it structural/bounded: identify which startup layer rejected the
+            # just-restored canonical archive without dumping archive field values.
+            reload_diagnostic = evaluate(page, r'''() => {
+              const out={
+                migrationReadOnlyKind:String(migrationReadOnly?.kind||''),
+                migrationReadOnlyReason:String(migrationReadOnly?.reason||'').slice(0,180),
+                startupSource:String(startupDataReport?.source||''),
+                startupError:String(startupDataReport?.error||'').slice(0,260),
+                guard:'not-run',integrity:'not-run',hydrate:'not-run',ensure:'not-run',manualEvidenceMatch:false
+              };
+              const safeError=e=>String(e?.message||e||'unknown').slice(0,260);
+              let raw=null;
+              try{raw=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');out.parse='ok';}
+              catch(e){out.parse='fail:'+safeError(e);return out;}
+              try{PLDataMigrationGuard.requireReadable(raw);out.guard='ok';}
+              catch(e){out.guard='fail:'+safeError(e);}
+              try{assertCanonicalIntegrity(raw);out.integrity='ok';}
+              catch(e){out.integrity='fail:'+safeError(e);}
+              let hydrated=null;
+              try{hydrated=hydrateCanonicalArchive(raw);out.hydrate='ok';}
+              catch(e){out.hydrate='fail:'+safeError(e);}
+              if(hydrated){
+                try{const ensured=ensureSelfProfileAndLinks(hydrated);out.ensure='ok';
+                  out.manualEvidenceMatch=completeBackupRuleEvidence(ensured)===sessionStorage.getItem('r187-source-evidence');}
+                catch(e){out.ensure='fail:'+safeError(e);}
+              }
+              return out;
+            }''')
+            report['reload_diagnostic']=reload_diagnostic
             final = evaluate(page, r'''async () => {
               const original=sessionStorage.getItem('r187-source-evidence');
               const saved=localStorage.getItem(STORAGE_KEY),raw=JSON.parse(saved);

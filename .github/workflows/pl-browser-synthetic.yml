@@ -543,6 +543,8 @@ jobs:
         run: node --test .github/pl-ci/round255-dnd-sparse-office-grid.test.cjs
       - name: Round256 native attachment evidence hash contract
         run: node --test .github/pl-ci/round256-native-attachment-evidence-hash.test.cjs
+      - name: Round257 native diagnostic and independent-gate separation
+        run: node --test .github/pl-ci/round257-native-diagnostic-and-gate-separation.test.cjs
       - name: Round251 native release evidence attestation fixtures
         run: python .github/pl-ci/round251-native-result-attestation-test.py
       - name: Round223 private offline D&D difference audit synthetic contract
@@ -893,6 +895,7 @@ jobs:
         shell: bash
         run: |
           failed=0
+          echo "Round187:${{ steps.round187_browser.outcome }} (informational in synthetic regression; mandatory release enforcement is PL isolated native ZIP restore gate)"
           for check in \
             "Round134:${{ steps.round134_browser.outcome }}" \
             "Round141:${{ steps.round141_browser.outcome }}" \
@@ -928,7 +931,6 @@ jobs:
             "Round184:${{ steps.round184_browser.outcome }}" \
             "Round185:${{ steps.round185_browser.outcome }}" \
             "Round186:${{ steps.round186_browser.outcome }}" \
-            "Round187:${{ steps.round187_browser.outcome }}" \
             "Round188:${{ steps.round188_browser.outcome }}" \
             "Round206:${{ steps.round206_browser.outcome }}" \
             "Round207:${{ steps.round207_browser.outcome }}" \
