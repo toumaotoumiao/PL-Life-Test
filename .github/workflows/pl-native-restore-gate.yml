@@ -98,8 +98,10 @@ jobs:
             .github/pl-ci/round253-dnd-office-resave-contract.test.cjs \
             .github/pl-ci/round254-native-archive-evidence-hash.test.cjs \
             .github/pl-ci/round255-dnd-sparse-office-grid.test.cjs \
-            .github/pl-ci/round256-native-attachment-evidence-hash.test.cjs
-            .github/pl-ci/round257-native-diagnostic-and-gate-separation.test.cjs
+            .github/pl-ci/round256-native-attachment-evidence-hash.test.cjs \
+            .github/pl-ci/round257-native-diagnostic-and-gate-separation.test.cjs \
+            .github/pl-ci/round258-startup-run-key-order.test.cjs \
+            .github/pl-ci/round259-native-workflow-continuation.test.cjs
       - name: Verify privacy-local D&D comparison using temporary fictional sheets
         run: python .github/pl-ci/round223-dnd5-private-diff-test.py
       - name: Test native-result evidence attestation (fictional reports only)

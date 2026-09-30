@@ -2,6 +2,7 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
 const root=path.resolve(__dirname,'../..'),html=fs.readFileSync(path.join(root,'index.html'),'utf8'),sw=fs.readFileSync(path.join(root,'sw.js'),'utf8');
 function extract(name,next){const begin=html.indexOf('function '+name+'(');assert.ok(begin>=0,name);const end=html.indexOf(next,begin);assert.ok(end>begin,name+' end');return html.slice(begin,end);}
+function extractConst(name){const begin=html.indexOf('const '+name+' = ');assert.ok(begin>=0,name);const end=html.indexOf(';',begin);assert.ok(end>begin,name+' end');return html.slice(begin,end+1);}
 function sandbox(){const context={
   normalizeModuleRuleMeta:(raw)=>({...raw}),defaultModuleRuleMeta:(source='new-default')=>({familyId:'brp',systemId:'coc',editionId:'7e',confirmed:source==='new-default',source}),
   moduleRuleDisplay:r=>(r.systemId||r.familyId)+'/'+(r.editionId||''),moduleById:id=>context.modules.find(m=>m.id===id),modules:[],
@@ -10,7 +11,7 @@ function sandbox(){const context={
   normalizeLogRows:()=>[],normalizeParticipantAssignments:()=>[],normalizeKpc:()=>({}),normalizePlanSlots:()=>[],normalizeTableStatus:()=>'',hasPostRunDraft:()=>false,normalizePostRunDraft:()=>({}),
   uid:()=> 'id-1',clone:x=>JSON.parse(JSON.stringify(x)),mutateRunPlan:()=>true,mutateRunRecord:()=>true,
   planInputPending:null,recordInputPending:null,runPlans:[],runRecords:[],
-  };vm.createContext(context);vm.runInContext(extract('pcPreserveUnknownJsonProps','function normalizePcArchive('),context);vm.runInContext(extract('normalizeRunRuleSnapshot','function normalizeRunPlan('),context);return context;}
+  };vm.createContext(context);for(const name of ['RUN_CANONICAL_ONLY_KEYS','RUN_RUNTIME_ONLY_KEYS','RUN_DRAFT_KNOWN_KEYS'])vm.runInContext(extractConst(name),context);vm.runInContext(extract('pcPreserveUnknownJsonProps','function normalizePcArchive('),context);vm.runInContext(extract('normalizeRunRuleSnapshot','function normalizeRunPlan('),context);return context;}
 function json(value){return JSON.parse(JSON.stringify(value));}
 test('new table inherits selected taxonomy; old run without saved rule remains unrecorded',()=>{
   const x=sandbox(),m={id:'m1',ruleMeta:{familyId:'saikoro-fiction',systemId:'insane',editionId:'',source:'user-selected'}};

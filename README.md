@@ -1,13 +1,5 @@
-Stage84 · v8.1.12.263 内部候选。
+Stage85 · v8.1.12.264 内部候选。
 
-本轮：D&D 独立规则 XLSX 核对支持 Office/WPS 省略空白单元格的安全稀疏结构；原生恢复结果新增业务档案与附件双重四阶段匿名哈希证明。正式发布仍需线上原生恢复 PASS、真实 Excel/WPS 与真实设备验收。
+本轮修复完整 ZIP 恢复完成后 reload 进入保护模式的启动顺序 TDZ：跑团 canonical/runtime key 集合现在在首次 loadState() 前初始化；同时修复独立原生恢复 CI 的多行测试续行，并增加启动顺序与 workflow 完整性防回归。
 
-Stage83 · v8.1.12.262 内部候选。
-
-本轮重点：
-- D&D 已导出规则数据 XLSX 的只读核对接受安全的 Excel/WPS 常见重保存结构：文档属性、主题与共享字符串；宏、外部关系、额外工作表、公式、嵌入对象仍拒绝。
-- 原生完整 ZIP 恢复结果增加四阶段匿名档案证据 SHA-256：来源 ZIP、恢复后重开、二次 ZIP、损坏 ZIP 拒绝后再次重开必须一致。
-- 数据结构 schema26、完整备份格式与正式档案字段均未改变。
-
-当前仍是内部候选。正式站不得发布，直到同一提交的原生恢复 CI PASS、真实 Excel/WPS 打开重保存核对、真实 Windows/手机验收完成。
-详见 STAGE83_REPORT.md 与 STAGE83_TEST_REPO_GUIDE.md。
+schema26、完整 ZIP 格式和正式数据结构不变。正式站尚未发布；必须先取得 PL-Life-Test 同一提交的 synthetic browser 与 isolated native ZIP restore 结果。

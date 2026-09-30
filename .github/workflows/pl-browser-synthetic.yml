@@ -545,6 +545,10 @@ jobs:
         run: node --test .github/pl-ci/round256-native-attachment-evidence-hash.test.cjs
       - name: Round257 native diagnostic and independent-gate separation
         run: node --test .github/pl-ci/round257-native-diagnostic-and-gate-separation.test.cjs
+      - name: Round258 startup archive dependency order
+        run: node --test .github/pl-ci/round258-startup-run-key-order.test.cjs
+      - name: Round259 native workflow continuation contract
+        run: node --test .github/pl-ci/round259-native-workflow-continuation.test.cjs
       - name: Round251 native release evidence attestation fixtures
         run: python .github/pl-ci/round251-native-result-attestation-test.py
       - name: Round223 private offline D&D difference audit synthetic contract
