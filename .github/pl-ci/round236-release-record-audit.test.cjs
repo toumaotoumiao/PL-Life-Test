@@ -7,4 +7,4 @@ const found={};for (const [,version,copy] of html.matchAll(/<div class="version-
  (found[version]??=[]).push(crypto.createHash('sha256').update(copy).digest('hex'));
 }
 test('Round236 historical duplicate release records retain original ordering and content',()=>{for(const [v,hashes] of Object.entries(expected)){assert.ok(hashes.length>1,`expected prior ambiguity for ${v}`);assert.deepEqual(found[v],hashes,`historical release ${v} silently rewritten`);}});
-test('Round236 legacy collisions are explicitly audited, not repaired by guessing dates or versions',()=>{assert.equal(Object.keys(expected).length,4);const stage=fs.readFileSync(path.join(root,'STAGE75_REPORT.md'),'utf8');assert.match(stage,/历史版本记录/);assert.match(stage,/保留/);});
+test('Round236 legacy collisions stay explicitly enumerated without relying on stage-report packaging',()=>{const keys=Object.keys(expected).sort();assert.deepEqual(keys,['8.1.12.101','8.1.12.52','8.1.12.69','8.1.12.79'].sort());for(const hashes of Object.values(expected)){assert.ok(hashes.length>1);assert.equal(new Set(hashes).size,hashes.length);}assert.deepEqual(Object.keys(found).sort(),keys);});
