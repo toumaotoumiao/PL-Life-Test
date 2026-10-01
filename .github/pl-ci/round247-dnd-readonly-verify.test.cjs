@@ -25,7 +25,7 @@ test('Round247 rejects foreign layout, version confusion and invalid field names
 });
 test('Round247 explicit UI is limited to D&D, never persists or imports the compared workbook',()=>{
  assert.match(html,/id="pcFooterVerifyDndXlsxBtn"[^>]*hidden/);
- assert.match(html,/verifyButton\.hidden=!\(state\.status==='ready'&&state\.adapterId==='dnd-manual'\)/);
+ assert.match(html,/if\(verifyButton\)verifyButton\.hidden=true/);
  assert.match(src,/pcExcelUnzip\(raw\)/);assert.match(src,/pcExcelReadXlsx\(raw\)/);
  assert.doesNotMatch(src,/pcWorkbookPut\(|pcMediaPut\(|saveState\(|pcDraft\s*=\s*(?!target)/);
  assert.match(html,/pcFooterVerifyDndXlsxInput'\)\?\.addEventListener\('change'/);

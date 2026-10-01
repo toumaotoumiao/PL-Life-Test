@@ -555,6 +555,12 @@ jobs:
         run: node --test .github/pl-ci/round261-mobile-rule-popover-anchor.test.cjs
       - name: Round262 mobile rule popover dismissal contract
         run: node --test .github/pl-ci/round262-mobile-rule-popover-dismiss.test.cjs
+      - name: Round264 D&D template-filled character-card contract
+        run: node --test .github/pl-ci/round264-dnd-template-export.test.cjs
+      - name: Round264 D&D template-filled character-card browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/pl-synthetic-report"
+          PL_SYNTHETIC_REPORT_DIR="$RUNNER_TEMP/pl-synthetic-report" PYTHONUNBUFFERED=1 python .github/pl-ci/round264-dnd-template-export-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round264-browser.log"
       - name: Round263 production release package preflight
         run: |
           node --test .github/pl-ci/round263-production-release-preflight.test.cjs

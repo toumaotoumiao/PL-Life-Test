@@ -34,14 +34,14 @@ with sync_playwright() as p:
      const parsed=await pcExcelReadXlsx(raw),all=await pcExcelUnzip(raw),xml=new TextDecoder().decode(all['xl/worksheets/sheet1.xml']);
      const seen=parsed[0].rows.map(x=>x.join('|')).join('\\n');
      let download=null;const original=downloadBlobFile;downloadBlobFile=(b,n)=>{download={name:n,size:b.size};return true};
-     const clicked=await pcExportExcelCard(pc);downloadBlobFile=original;
+     const clicked=await pcExportDndRuleWorkbook(pc);downloadBlobFile=original;
      const response={edition,immutable:before===JSON.stringify(pc),scope:parsed.length===1&&parsed[0].name==='DND规则数据'&&seen.includes(edition.slice(3)),
        values:['15','=2+3','4','024','FictionalSpecies_测试'].every(v=>seen.includes(v)),
        notes:seen.includes('保留+号和引号"'),blank:!seen.includes('背景|'),
        privacy:!seen.includes('DO_NOT_EXPORT_SYNTHETIC')&&!xml.includes('DO_NOT_EXPORT_SYNTHETIC'),
        textCell:xml.includes('=2+3')&&!xml.includes('<f>'),
        zipParts:['[Content_Types].xml','_rels/.rels','xl/workbook.xml','xl/_rels/workbook.xml.rels','xl/styles.xml','xl/worksheets/sheet1.xml'].every(n=>!!all[n]),
-       userExport:clicked===true&&download?.name.includes(edition.slice(3))&&download.name.endsWith('.xlsx')&&download.size>1500,
+       legacyDiagnosticExport:clicked===true&&download?.name.includes(edition.slice(3))&&download.name.endsWith('.xlsx')&&download.size>1500,
        rows:parsed[0].rows.length,bytes:build.blob.size};
      const verified=await pcDndVerifyStandaloneFile(new File([raw],'fiction.xlsx'),pc);
      response.readonlyVerify=verified.exact&&verified.matching===build.count&&verified.changed===0;
@@ -118,20 +118,14 @@ with sync_playwright() as p:
   for width in [320,375,390,430,768,1024,1280,1440]:
    page.set_viewport_size({'width':width,'height':900})
    page.evaluate('''()=>{const more=document.querySelector('.pc-foot-more-v72');if(more)more.open=true;const menu=document.querySelector('.pc-footer-export-menu');if(menu)menu.open=true;}''')
-   geom=page.evaluate('''()=>{const b=document.querySelector('#pcFooterExportExcelBtn'),e=b.getBoundingClientRect();return {ready:b.dataset.pcExcelExportState==='ready'&&!b.disabled&&b.textContent.includes('已填规则数据'),width:e.width,height:e.height,left:e.left,right:e.right,overflow:document.documentElement.scrollWidth-innerWidth}}''')
+   geom=page.evaluate('''()=>{const b=document.querySelector('#pcFooterExportExcelBtn'),e=b.getBoundingClientRect();return {ready:b.dataset.pcExcelExportState==='ready'&&!b.disabled&&b.textContent.includes('角色 Excel 卡'),width:e.width,height:e.height,left:e.left,right:e.right,overflow:document.documentElement.scrollWidth-innerWidth}}''')
    record(f'{width}:export-button-ready',geom['ready'])
    record(f'{width}:export-button-readable',geom['width']>80 and geom['height']>=40 and geom['left']>=-2 and geom['right']<=width+2 and geom['overflow']<=3)
-   verify=page.evaluate('''()=>{const b=document.getElementById('pcFooterVerifyDndXlsxBtn'),r=b.getBoundingClientRect();return {ready:!b.hidden,visible:r.width>80&&r.height>=35,left:r.left,right:r.right}}''')
-   record(f'{width}:verify-button-available',verify['ready'] and verify['visible'] and verify['left']>=-2 and verify['right']<=width+2)
+   verify=page.evaluate('''()=>{const b=document.getElementById('pcFooterVerifyDndXlsxBtn'),r=b.getBoundingClientRect();return {hidden:b.hidden,width:r.width,height:r.height}}''')
+   record(f'{width}:legacy-verify-hidden',verify['hidden'] and verify['width']==0 and verify['height']==0)
    if width in [320,390,1280]:page.screenshot(path=str(out/f'round242-export-{width}.png'),full_page=False)
-  # Exercise the actual button -> file chooser -> read-only comparison path.
-  before=page.evaluate('''()=>{window.__r247Before=JSON.stringify(pcDraft);window.__r247SaveBefore=localStorage.getItem(STORAGE_KEY);window.__r247Notices=[];window.__r247OriginalNotice=appNotice;appNotice=(m,t)=>window.__r247Notices.push({message:String(m),title:String(t)});return true}''')
-  with page.expect_file_chooser(timeout=20000) as chooser:
-   page.locator('#pcFooterVerifyDndXlsxBtn').click()
-  chooser.value.set_files(str(out/'round242-fiction-workbook.xlsx'))
-  page.wait_for_function('window.__r247Notices?.length>0',timeout=30000)
-  ui=page.evaluate('''()=>{const notice=window.__r247Notices[0];appNotice=window.__r247OriginalNotice;return {notice:notice.title==='D&D XLSX 核对结果'&&notice.message.includes('差异')&&!notice.message.includes('DO_NOT_EXPORT_SYNTHETIC'),draft:JSON.stringify(pcDraft)===window.__r247Before,storage:localStorage.getItem(STORAGE_KEY)===window.__r247SaveBefore}}''')
-  for key,value in ui.items():record('file-chooser-readonly:'+key,value)
+  # Standalone XLSX remains an internal compatibility path; it is no longer exposed as the primary D&D export UI.
+  record('standalone:legacy-verifier-hidden',page.evaluate("()=>document.getElementById('pcFooterVerifyDndXlsxBtn').hidden===true"))
   hidden=page.evaluate('''()=>{const old=pcDraft.ruleMeta;pcDraft.ruleMeta={familyId:'brp',systemId:'coc',editionId:'7e',confirmed:true};syncPcExcelExportUi(pcDraft);const b=document.getElementById('pcFooterVerifyDndXlsxBtn');const r=b.getBoundingClientRect(),hidden=b.hidden;pcDraft.ruleMeta=old;syncPcExcelExportUi(pcDraft);return {hidden,width:r.width,height:r.height}}''')
   record('non-dnd:readonly-verify-hidden',hidden['hidden'] and hidden['width']==0 and hidden['height']==0)
   page.close()
