@@ -104,7 +104,10 @@ jobs:
             .github/pl-ci/round259-native-workflow-continuation.test.cjs \
             .github/pl-ci/round260-startup-settings-decoupling.test.cjs \
             .github/pl-ci/round261-mobile-rule-popover-anchor.test.cjs \
-            .github/pl-ci/round262-mobile-rule-popover-dismiss.test.cjs
+            .github/pl-ci/round262-mobile-rule-popover-dismiss.test.cjs \
+            .github/pl-ci/round263-production-release-preflight.test.cjs
+      - name: Verify production release package preflight
+        run: python .github/pl-ci/build-production-release.py --check-only
       - name: Verify privacy-local D&D comparison using temporary fictional sheets
         run: python .github/pl-ci/round223-dnd5-private-diff-test.py
       - name: Test native-result evidence attestation (fictional reports only)

@@ -555,6 +555,10 @@ jobs:
         run: node --test .github/pl-ci/round261-mobile-rule-popover-anchor.test.cjs
       - name: Round262 mobile rule popover dismissal contract
         run: node --test .github/pl-ci/round262-mobile-rule-popover-dismiss.test.cjs
+      - name: Round263 production release package preflight
+        run: |
+          node --test .github/pl-ci/round263-production-release-preflight.test.cjs
+          python .github/pl-ci/build-production-release.py --check-only
       - name: Round251 native release evidence attestation fixtures
         run: python .github/pl-ci/round251-native-result-attestation-test.py
       - name: Round223 private offline D&D difference audit synthetic contract
