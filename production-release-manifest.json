@@ -1,11 +1,12 @@
 {
   "format": "pl-life-production-release-manifest",
   "manifestVersion": 1,
-  "appVersion": "8.1.12.268",
+  "appVersion": "8.1.12.270",
   "schemaVersion": 26,
   "rootFiles": [
     ".nojekyll",
     "README.md",
+    "CURRENT_PROJECT_STATUS.json",
     "RUN_STAGE48_NATIVE_RECOVERY.cmd",
     "STAGE48_NATIVE_RECOVERY_WINDOWS.md",
     "PRODUCTION_RELEASE_GUIDE.md",
@@ -114,6 +115,10 @@
     "STAGE85_",
     "STAGE86_",
     "STAGE87_",
-    "STAGE88_"
+    "STAGE88_",
+    "STAGE89_",
+    "STAGE90_",
+    "STAGE91_",
+    "STAGE92_"
   ]
 }

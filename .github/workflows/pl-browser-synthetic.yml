@@ -557,10 +557,24 @@ jobs:
         run: node --test .github/pl-ci/round262-mobile-rule-popover-dismiss.test.cjs
       - name: Round264 D&D template-filled character-card contract
         run: node --test .github/pl-ci/round264-dnd-template-export.test.cjs
+      - name: Round265 unified image-export source-preview contract
+        run: node --test .github/pl-ci/round265-unified-export-source-preview.test.cjs
+      - name: Round266 canonical current-project status contract
+        run: node --test .github/pl-ci/round266-current-status-source.test.cjs
+      - name: Round267 HO free-column drag contract
+        run: node --test .github/pl-ci/round267-ho-free-column-drag.test.cjs
       - name: Round264 D&D template-filled character-card browser
         run: |
           mkdir -p "$RUNNER_TEMP/pl-synthetic-report"
           PL_SYNTHETIC_REPORT_DIR="$RUNNER_TEMP/pl-synthetic-report" PYTHONUNBUFFERED=1 python .github/pl-ci/round264-dnd-template-export-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round264-browser.log"
+      - name: Round265 unified image-export source-preview browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/pl-synthetic-report"
+          PL_SYNTHETIC_REPORT_DIR="$RUNNER_TEMP/pl-synthetic-report" PYTHONUNBUFFERED=1 python .github/pl-ci/round265-unified-export-source-preview-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round265-browser.log"
+      - name: Round267 HO free-column drag browser
+        run: |
+          mkdir -p "$RUNNER_TEMP/pl-synthetic-report"
+          PL_SYNTHETIC_REPORT_DIR="$RUNNER_TEMP/pl-synthetic-report" PYTHONUNBUFFERED=1 python .github/pl-ci/round267-ho-free-column-drag-browser.py 2>&1 | tee "$RUNNER_TEMP/pl-synthetic-report/round267-browser.log"
       - name: Round263 production release package preflight
         run: |
           node --test .github/pl-ci/round263-production-release-preflight.test.cjs
