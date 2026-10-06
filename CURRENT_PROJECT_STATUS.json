@@ -4,14 +4,14 @@
   "sourceOfTruth": true,
   "updatedAt": "2026-10-07",
   "current": {
-    "stage": 113,
-    "appVersion": "8.1.12.291",
+    "stage": 114,
+    "appVersion": "8.1.12.292",
     "schemaVersion": 26,
     "branchState": "release-candidate",
     "focus": [
-      "开团计划默认具体时间",
-      "手动排期自动带入每份计划的默认开始/结束时间",
-      "每次安排保持独立并可逐次修改或显式批量套用默认"
+      "修复 GitHub Actions synthetic Chromium 的 Round141 假失败",
+      "Round141 隔离 PC 完整档案导出夹具同步当前 moduleRuleDisplay 生产依赖",
+      "保持 Stage113 开团计划默认具体时间产品逻辑不变"
     ]
   },
   "statusPolicy": {
@@ -39,7 +39,7 @@
   },
   "currentVersionAcceptance": {
     "automated": {
-      "state": "stage113-full-regression-passed",
+      "state": "stage114-local-regression-passed-github-synthetic-rerun-pending",
       "node": {
         "state": "pass",
         "passed": 1036,
@@ -107,7 +107,7 @@
         "storageHarness": "isolated-memory-workbook-stub",
         "note": "当前执行环境阻止 localhost 原生 IndexedDB 浏览器导航；原生附件/完整 ZIP 持久化继续由既有存储与恢复回归覆盖，不将本项冒充原生 IndexedDB 真机证明。"
       },
-      "baselineInheritedFrom": "Stage112 full Node 1030/1030 + current Round285 full Node/static/browser regression",
+      "baselineInheritedFrom": "Stage113 full Node 1036/1036 + Round285 Chromium 72/72；Stage114 仅修复 Round141 synthetic fixture 依赖并重新回归",
       "targetedStaticChecksStage95": {
         "passed": 10,
         "total": 10,
@@ -604,7 +604,33 @@
           1280,
           1440
         ],
-        "scope": "手动安排继承默认时间、默认修改不回写旧场次、改期保留单次时间、逐场编辑独立性、编辑器几何与周历具体时间输出"
+        "scope": "Stage113 计划默认具体时间功能在 Stage114 版本更新后重新回归，无产品逻辑变化"
+      },
+      "round141PcArchiveBrowserHotfix": {
+        "state": "local-system-chromium-pass-github-actions-rerun-pending",
+        "viewports": [
+          320,
+          390,
+          1440
+        ],
+        "densities": [
+          "compact",
+          "standard",
+          "relaxed"
+        ],
+        "geometryCasesPassed": 9,
+        "longContinuationViewportsPassed": 3,
+        "scope": "PC 完整档案双栏导出隔离 Chromium 夹具直接注入当前生产 moduleRuleDisplay；长技能续页继续覆盖",
+        "rootCause": "测试夹具依赖漂移；产品运行时本身存在 moduleRuleDisplay，不是用户页面或导出运行时故障"
+      },
+      "userReturnedSyntheticV291": {
+        "state": "reviewed",
+        "source": "pl-synthetic-browser-result (15).zip",
+        "siteVersion": "8.1.12.291",
+        "nativeSyntheticIntegrationPassed": 13,
+        "nativeSyntheticIntegrationTotal": 13,
+        "blockingFailure": "Round141 isolated Chromium fixture ReferenceError: moduleRuleDisplay is not defined",
+        "conclusion": "CI fixture dependency drift; Stage113 product runtime not implicated"
       }
     },
     "realDevice": {
@@ -619,26 +645,27 @@
       ]
     },
     "release": {
-      "state": "candidate-not-yet-confirmed-live",
+      "state": "candidate-local-gates-pass-github-synthetic-rerun-pending",
       "productionPackage": "built-locally-after-preflight-pass",
-      "productionSite": "not-verified-as-v8.1.12.291",
-      "testSite": "not-verified-as-v8.1.12.291",
+      "productionSite": "not-verified-as-v8.1.12.292",
+      "testSite": "not-verified-as-v8.1.12.292",
       "artifactNames": [
-        "Stage113_完整候选工程.zip",
-        "Stage113_正式仓库完整同步包.zip",
-        "Stage113_测试仓库完整同步包.zip",
-        "Stage113_测试证据与SHA256.zip"
+        "Stage114_完整候选工程.zip",
+        "Stage114_正式仓库完整同步包.zip",
+        "Stage114_测试仓库完整同步包.zip",
+        "Stage114_测试证据与SHA256.zip"
       ]
     }
   },
   "workstreams": {
     "coreProduct": {
       "scopeProgressPercent": 100,
-      "code": "complete-for-stage113-scope",
-      "automatedTests": "Stage113 full Node 1036/1036 + Round285 browser 72/72",
+      "code": "complete-for-stage114-ci-hotfix-scope",
+      "automatedTests": "Stage114 full Node 1036/1036; Round141 local Chromium 9 geometry + 3 long-continuation viewports PASS; Round285 72/72; GitHub chromium-synthetic rerun pending",
       "realDevice": "accepted-baseline + stage113-targeted-check-pending",
       "release": "candidate",
-      "stage113Scope": "plan-default-exact-time-and-independent-occurrence-overrides"
+      "stage113Scope": "plan-default-exact-time-and-independent-occurrence-overrides",
+      "stage114Scope": "synthetic-round141-dependency-drift-hotfix-no-product-runtime-change"
     },
     "backupRecoveryMigration": {
       "scopeProgressPercent": 100,

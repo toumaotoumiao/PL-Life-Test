@@ -1,5 +1,5 @@
 const fs=require('fs'),path=require('path'),test=require('node:test'),assert=require('node:assert/strict');
-const root=path.resolve(__dirname,'../..'),html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const root=path.resolve(__dirname,'../..'),html=fs.readFileSync(path.join(root,'index.html'),'utf8'),status=JSON.parse(fs.readFileSync(path.join(root,'CURRENT_PROJECT_STATUS.json'),'utf8')),currentVersion=status.current.appVersion;
 function block(name,next){const start=html.indexOf(`function ${name}`);assert.notEqual(start,-1,`${name} missing`);const end=next?html.indexOf(`function ${next}`,start+1):html.indexOf('\nfunction ',start+1);return html.slice(start,end<0?start+16000:end);}
 
 test('plan default exact-time preset is normalized and stored without schema bump',()=>{
@@ -8,7 +8,7 @@ test('plan default exact-time preset is normalized and stored without schema bum
   assert.ok(normalize.includes('schedulePreset: normalizePlanSchedulePreset'));
   const blank=block('makeBlankRunPlan','isMeaningfulRunPlan');
   assert.ok(blank.includes('schedulePreset: normalizePlanSchedulePreset(null)'));
-  assert.ok(html.includes('const APP_UI_VERSION = "8.1.12.291";'));
+  assert.ok(html.includes(`const APP_UI_VERSION = "${currentVersion}";`));
   assert.ok(html.includes('const DATA_SCHEMA_VERSION = 26;'));
 });
 
@@ -53,9 +53,12 @@ test('one-click periodic scheduling prefers the plan preset and calendar display
   assert.ok(html.includes('slot.startTime&&slot.endTime?escapeHTML(slot.startTime)+\'–\'+escapeHTML(slot.endTime):part.label'));
 });
 
-test('release history keeps prior v290 entry distinct from current v291',()=>{
-  const current=(html.match(/<strong class="version-log-version">v8\.1\.12\.291<\/strong>/g)||[]).length;
+test('release history keeps Stage113 plan-time note distinct from the current release',()=>{
+  const currentToken=currentVersion.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const current=(html.match(new RegExp(`<strong class=\"version-log-version\">v${currentToken}<\\/strong>`,'g'))||[]).length;
+  const stage113=(html.match(/<strong class="version-log-version">v8\.1\.12\.291<\/strong>/g)||[]).length;
   const prior=(html.match(/<strong class="version-log-version">v8\.1\.12\.290<\/strong>/g)||[]).length;
   assert.equal(current,1,'current release note should occur once');
+  assert.equal(stage113,1,'Stage113 plan-time release note must remain once');
   assert.ok(prior>=1,'prior 290 release note must remain in history');
 });
