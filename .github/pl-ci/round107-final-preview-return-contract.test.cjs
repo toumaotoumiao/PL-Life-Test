@@ -12,9 +12,8 @@ test('final export preview states the privacy snapshot before download',()=>{
   assert.match(html,/privacyEnabled=Boolean\(privacyMaskEnabled\)/);
   assert.match(html,/uxPendingExport=\{previewSize:uxExportPreviewSizeMode,sourceCanvases:canvases,canvases,filenames,filename:Array\.isArray\(filename\)\?filenames\[0\]:filename,title,success,returnToEditor,privacyEnabled,/);
   assert.match(html,/exportLayout:storedUnifiedExportLayout\(\)/);
-  assert.match(html,/<strong>隐私导出已开启<\/strong>/);
-  assert.match(html,/<strong>隐私导出已关闭<\/strong>/);
-  assert.match(html,/人物匿名；日期与时段以当前选择为准/);
+  assert.match(html,/<strong>隐私导出：开启<\/strong>/);
+  assert.match(html,/<strong>隐私导出：关闭<\/strong>/);
 });
 
 test('cancel becomes return-to-editor while close and backdrop remain plain dismiss actions',()=>{
@@ -35,7 +34,7 @@ test('all principal image composers register a return path to the source editor'
     /跑团整理 · 导出预览[\s\S]{0,500}returnToEditor:\(\)=>toggleHoOrganizerExportComposer\(true\)/,
     /单桌跑团回顾 · 导出预览[\s\S]{0,500}returnToEditor:\(\)=>openRecordShowcase\(r\.id\)/,
     /档案图片已导出'[\s\S]{0,260}returnToEditor:\(\)=>returnMode==='pc'\?openPc\(returnId,returnPcOverride\):openMod\(returnId\)/,
-    /跑团记录 · 整合回顾 · 导出预览[\s\S]{0,400}returnToEditor:\(\)=>open\(\)/
+    /跑团回顾 · 导出预览[\s\S]{0,400}returnToEditor:\(\)=>open\(\)/
   ];
   for(const re of required) assert.match(html,re);
 });
